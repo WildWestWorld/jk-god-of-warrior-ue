@@ -3,7 +3,12 @@
 
 #include "DataAssets/Input/DataAsset_InputConfig.h"
 
-UInputAction* UDataAsset_InputConfig::FindNativeInputActionByTag(const FGameplayTag& InputTag)
+// 在这个函数声明中,末尾的 const 表示这是一个常成员函数(const member function)。它有以下含义:
+//
+// 这个成员函数不会修改类的任何成员变量的值(除非成员变量被声明为 mutable)
+// 在这个函数内部,不能调用该类的非 const 成员函数
+// 这个函数可以被 const 对象调用
+UInputAction* UDataAsset_InputConfig::FindNativeInputActionByTag(const FGameplayTag& InputTag) const
 {
 	// 遍历 NativeInputActions 数组中的每个元素
 	// NativeInputActions 定义在.h文件里面7

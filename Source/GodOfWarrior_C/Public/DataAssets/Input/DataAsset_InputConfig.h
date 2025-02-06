@@ -51,6 +51,12 @@ public:
 	// FWarriorInputActionConfig 是我们自定义的结构体类型，用于存储单个输入动作的配置。
 	TArray<FWarriorInputActionConfig> NativeInputActions; // 存储多个 FWarriorInputActionConfig 对象的数组，用于存储具体的输入动作配置。
 
+
+	// 	在这个函数声明中,末尾的 const 表示这是一个常成员函数(const member function)。它有以下含义:
+	//
+	// 这个成员函数不会修改类的任何成员变量的值(除非成员变量被声明为 mutable)
+	// 在这个函数内部,不能调用该类的非 const 成员函数
+	// 这个函数可以被 const 对象调用
 	//根据Tag查找对应的InputAction
-	UInputAction* FindNativeInputActionByTag(const FGameplayTag& InputTag);
+	UInputAction* FindNativeInputActionByTag(const FGameplayTag& InputTag) const;
 };
