@@ -6,9 +6,15 @@
 // 添加调试器
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "Debug/WarriorDebugHelper.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "EnhancedInputSubsystems.h"
+#include "Components/Input/WarriorEnhancedInputComponent.h"
+#include "DataAssets/Input/DataAsset_InputConfig.h"
+
+
+#include "Debug/WarriorDebugHelper.h"
+#include "GameplayTags/WarriorGameplayTags.h"
 
 // init
 AWarriorHeroCharacter::AWarriorHeroCharacter()
@@ -54,6 +60,7 @@ AWarriorHeroCharacter::AWarriorHeroCharacter()
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 }
 
+//开始的生命周期
 void AWarriorHeroCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -61,4 +68,113 @@ void AWarriorHeroCharacter::BeginPlay()
 	//Debug 命名空间
 	//Print调用 命名空间的打印函数
 	Debug::Print(TEXT("Working"));
+}
+
+//初始化Input组件
+//不要使用InputComponent 作为变量名
+/**
+* 设置玩家输入组件，配置增强输入系统
+* @param PlayerInputComponent - 输入组件指针
+*/
+void AWarriorHeroCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	// 确保输入配置数据资产已设置
+	checkf(InputConfigDataAsset, TEXT("Forget to assign a valid data asset as input config"))
+
+	// 获取本地玩家
+	ULocalPlayer* LocalPlayer = GetController<APlayerController>()->GetLocalPlayer();
+	// 获取增强输入子系统
+	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem
+		<UEnhancedInputLocalPlayerSubsystem>(LocalPlayer);
+
+	// 确保子系统存在
+	check(Subsystem);
+	// 添加默认输入映射上下文
+	Subsystem->AddMappingContext(InputConfigDataAsset->DefaultMappingContext, 0);
+	// 转换为增强输入组件
+	UWarriorEnhancedInputComponent* WarriorEnhancedInputComponent = CastChecked<UWarriorEnhancedInputComponent>(
+		InputComponent);
+
+	// 绑定移动输入动作
+	//不适用，移动不了人物
+	WarriorEnhancedInputComponent->BindNativeInputAction(InputConfigDataAsset, WarriorGameplayTags::InputTag_Move,
+	                                                     ETriggerEvent::Triggered, this, &ThisClass::Input_Move);
+
+	//绑定观察/鼠标移动动作
+	//不使用，移动不了镜头
+	WarriorEnhancedInputComponent->BindNativeInputAction(InputConfigDataAsset, WarriorGameplayTags::InputTag_Look,
+	                                                     ETriggerEvent::Triggered, this, &ThisClass::Input_Look);
+}
+
+/**
+ * 处理角色移动输入的函数
+ * @param InputActionValue - 包含移动输入数据的结构体，来自增强输入系统
+ */
+void AWarriorHeroCharacter::Input_Move(const FInputActionValue& InputActionValue)
+{
+	// 从输入动作值中获取2D移动向量
+	// MovementVector.X 代表左右移动输入值 (-1.0 = 左, 1.0 = 右)
+	// MovementVector.Y 代表前后移动输入值 (-1.0 = 后, 1.0 = 前)
+	const FVector2D MovementVector = InputActionValue.Get<FVector2D>();
+
+	// 创建一个只包含偏航角(Yaw)的旋转器
+	// 通过获取控制器的当前旋转，确保移动方向跟随摄像机朝向
+	// 仅使用Yaw分量以保持角色保持直立（不考虑Pitch和Roll）
+	const FRotator MovementRotator(0.f, Controller->GetControlRotation().Yaw, 0.f);
+
+	// 处理前后移动
+	if (MovementVector.Y != 0.f) // 检查是否有前后方向的输入
+	{
+		// 将世界空间的前向单位向量(1,0,0)根据当前视角进行旋转
+		// 这样可以确保"前进"永远是相对于摄像机的前方，而不是角色模型的朝向
+		//
+		// 		FVector::ForwardVector 是虚幻引擎中的一个静态常量向量，表示世界坐标系中的前向单位向量，其值为 (1, 0, 0)。在 3D 空间中：
+		// X 轴 (1,0,0) 代表前向
+		// Y 轴 (0,1,0) 代表右向
+		// Z 轴 (0,0,1) 代表上向
+		const FVector ForwardDirection = MovementRotator.RotateVector(FVector::ForwardVector);
+
+		// 调用父类的移动输入函数，将旋转后的方向向量与输入值相乘
+		// MovementVector.Y作为输入强度，决定移动速度的比例
+		AddMovementInput(ForwardDirection, MovementVector.Y);
+	}
+
+	// 处理左右移动
+	if (MovementVector.X != 0.f) // 检查是否有左右方向的输入
+	{
+		// 将世界空间的右向单位向量(0,1,0)根据当前视角进行旋转
+		// 这样可以确保"右移"永远是相对于摄像机的右方，而不是角色模型的右方
+		const FVector RightDirection = MovementRotator.RotateVector(FVector::RightVector);
+
+		// 调用父类的移动输入函数，将旋转后的方向向量与输入值相乘
+		// MovementVector.X作为输入强度，决定移动速度的比例
+		AddMovementInput(RightDirection, MovementVector.X);
+	}
+}
+
+void AWarriorHeroCharacter::Input_Look(const FInputActionValue& InputActionValue)
+{
+	// 从输入值中获取二维向量，表示鼠标/摇杆的移动方向和强度
+	// X: 水平方向的输入值（左右移动）
+	// Y: 垂直方向的输入值（上下移动）
+	const FVector2D LookAxisVector = InputActionValue.Get<FVector2D>();
+
+	// 处理水平方向的视角旋转（左右转向）
+	if (LookAxisVector.X != 0.f)
+	{
+		// AddControllerYawInput: 添加水平旋转输入
+		// Yaw: 表示角色的水平旋转角度（绕垂直轴旋转）
+		// LookAxisVector.X: 正值表示向右转，负值表示向左转
+		AddControllerYawInput(LookAxisVector.X);
+	}
+
+	// 处理垂直方向的视角旋转（上下看）
+	if (LookAxisVector.Y != 0.f)
+	{
+		// AddControllerPitchInput: 添加垂直旋转输入
+		// Pitch: 表示摄像机的垂直旋转角度（抬头/低头）
+		// LookAxisVector.Y: 正值表示向上看，负值表示向下看
+		AddControllerPitchInput(LookAxisVector.Y);
+	}
 }

@@ -56,6 +56,6 @@ void UWarriorEnhancedInputComponent::BindNativeInputAction(
 	{
 		// 如果找到对应的输入动作，则进行绑定
 		// 将输入动作、触发条件、上下文对象和回调函数关联起来
-		BindAction(*FoundAction, TriggerEvent, ContextObject, Func);
+		BindAction(FoundAction, TriggerEvent, ContextObject, Func);
 	}
 }
