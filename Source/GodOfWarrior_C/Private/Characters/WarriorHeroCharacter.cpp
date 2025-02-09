@@ -70,38 +70,51 @@ void AWarriorHeroCharacter::BeginPlay()
 	Debug::Print(TEXT("Working"));
 }
 
+
+// 生命周期
+// A[Actor 创建] --> B[构造函数]
+// B --> C[SetupPlayerInputComponent]
+// C --> D[BeginPlay]
+// D --> E[正常游戏循环]
+
 //初始化Input组件
 //不要使用InputComponent 作为变量名
 /**
 * 设置玩家输入组件，配置增强输入系统
 * @param PlayerInputComponent - 输入组件指针
 */
+// SetupPlayerInputComponent 和 BeginPlay 一样会自己运行
+// UInputComponent* PlayerInputComponent 是函数返回值 e
 void AWarriorHeroCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	// 确保输入配置数据资产已设置
+	// 确保输入配置数据资产已设置,InputConfigDataAsset 是在编辑器里面我们设置的，里面放着DefaultMap
 	checkf(InputConfigDataAsset, TEXT("Forget to assign a valid data asset as input config"))
 
+	//---- 这里是为了设置 MappingContext
 	// 获取本地玩家
 	ULocalPlayer* LocalPlayer = GetController<APlayerController>()->GetLocalPlayer();
-	// 获取增强输入子系统
+	// 获取增强输入子系统，拿子系统是为了放MappingContext
 	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem
 		<UEnhancedInputLocalPlayerSubsystem>(LocalPlayer);
-
 	// 确保子系统存在
 	check(Subsystem);
 	// 添加默认输入映射上下文
 	Subsystem->AddMappingContext(InputConfigDataAsset->DefaultMappingContext, 0);
-	// 转换为增强输入组件
-	UWarriorEnhancedInputComponent* WarriorEnhancedInputComponent = CastChecked<UWarriorEnhancedInputComponent>(
-		InputComponent);
+	//-----
 
-	// 绑定移动输入动作
-	//不适用，移动不了人物
+	// UWarriorEnhancedInputComponent 使我们自定义的类
+	// 转换为增强输入组件
+	//为什么能转化？因为UWarriorEnhancedInputComponent 创建的时候就继承自UWarriorEnhancedInputComponent
+	UWarriorEnhancedInputComponent* WarriorEnhancedInputComponent = CastChecked<UWarriorEnhancedInputComponent>(
+		PlayerInputComponent);
+
+	// EnhanceInput绑定移动输入动作
+	//不使用，移动不了人物
 	WarriorEnhancedInputComponent->BindNativeInputAction(InputConfigDataAsset, WarriorGameplayTags::InputTag_Move,
 	                                                     ETriggerEvent::Triggered, this, &ThisClass::Input_Move);
 
-	//绑定观察/鼠标移动动作
+	//EnhanceInput绑定观察/鼠标移动动作
 	//不使用，移动不了镜头
 	WarriorEnhancedInputComponent->BindNativeInputAction(InputConfigDataAsset, WarriorGameplayTags::InputTag_Look,
 	                                                     ETriggerEvent::Triggered, this, &ThisClass::Input_Look);
@@ -109,7 +122,7 @@ void AWarriorHeroCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 
 /**
  * 处理角色移动输入的函数
- * @param InputActionValue - 包含移动输入数据的结构体，来自增强输入系统
+ * @param InputActionValue - 包含移动输入数据的结构体，来自增强输入系统,是事件返回的值类似于 js里面的Event事件
  */
 void AWarriorHeroCharacter::Input_Move(const FInputActionValue& InputActionValue)
 {

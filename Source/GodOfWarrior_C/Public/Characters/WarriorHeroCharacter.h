@@ -58,8 +58,10 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="CharacterData", meta=(AllowPrivateAccess="true"))
 	UDataAsset_InputConfig* InputConfigDataAsset;
 
+
+	//EnhanceInput 移动函数
 	void Input_Move(const FInputActionValue& InputActionValue);
-	
+	//EnhanceInput视角移动函数
 	void Input_Look(const FInputActionValue& InputActionValue);
 #pragma endregion Inputs
 };
