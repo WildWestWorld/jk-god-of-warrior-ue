@@ -30,6 +30,7 @@ void UWarriorCharacterAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaS
 	{
 		return;
 	}
+	
 	// 获取角色在XY平面(地面)上的移动速度(单位:UU/s)
 	// Size2D()计算二维向量的长度: √(X² + Y²)
 	GroundSpeed = OwningCharacter->GetVelocity().Size2D();
