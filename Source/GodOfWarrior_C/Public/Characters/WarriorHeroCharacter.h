@@ -38,6 +38,12 @@ protected:
 	//不要使用InptComponent作为变量
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
+
+
+	//生命周期 来自 APawn
+	//开始控制该角色的时候
+	virtual void PossessedBy(AController* NewController) override;
+
 private:
 #pragma region Components
 	// 	VisibleAnywhere：表示这个属性在编辑器的所有地方都可以看到，但它是只读的（不能编辑）。它表示你在 UE4 编辑器中会看到这个变量，但是不能修改它。

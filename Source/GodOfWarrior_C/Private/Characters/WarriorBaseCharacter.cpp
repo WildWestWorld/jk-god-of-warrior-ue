@@ -37,6 +37,14 @@ AWarriorBaseCharacter::AWarriorBaseCharacter()
 	WarriorAttributeSet = CreateDefaultSubobject<UWarriorAttributeSet>(TEXT("WarriorAttributeSet"));
 }
 
+//方法 来自 IAbilitySystemInterface 继承IAbilitySystemInterface 必须实现,需要返回UWarriorAbilitySystemComponent 类型  不然报错
+UAbilitySystemComponent* AWarriorBaseCharacter::GetAbilitySystemComponent() const
+{
+	//是我们自己的方法 返回UWarriorAbilitySystemComponent 在WarriorBaseCharacter.h 定义的
+	//返回UWarriorAbilitySystemComponent 在AWarriorBaseCharacter 初始化的时候 就设置了，所以能拿到
+	return GetWarriorAbilitySystemComponent();
+}
+
 //生命周期
 /**
 * 当角色被控制器接管时调用的函数
@@ -59,7 +67,7 @@ void AWarriorBaseCharacter::PossessedBy(AController* NewController)
 		// 第二个this: 实际的Avatar（同样是这个战士角色）
 		// 在某些情况下，拥有者和Avatar可能是不同的Actor
 		//为什么可能不同，其实就是 人与工具的关系，人催动工具，使用的是工具的技能
-		
+
 		WarriorAbilitySystemComponent->InitAbilityActorInfo(this, this);
 	}
 }

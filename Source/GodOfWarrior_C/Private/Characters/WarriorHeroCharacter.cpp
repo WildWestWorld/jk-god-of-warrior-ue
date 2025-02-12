@@ -9,6 +9,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "AbilitySystem/WarriorAbilitySystemComponent.h"
 #include "Components/Input/WarriorEnhancedInputComponent.h"
 #include "DataAssets/Input/DataAsset_InputConfig.h"
 
@@ -118,6 +119,36 @@ void AWarriorHeroCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 	//不使用，移动不了镜头
 	WarriorEnhancedInputComponent->BindNativeInputAction(InputConfigDataAsset, WarriorGameplayTags::InputTag_Look,
 	                                                     ETriggerEvent::Triggered, this, &ThisClass::Input_Look);
+}
+
+//生命周期
+/**
+* 当角色被Controller控制时调用此函数
+* @param NewController 接管控制的Controller指针
+*/
+void AWarriorHeroCharacter::PossessedBy(AController* NewController)
+{
+	// 调用父类的PossessedBy方法
+	Super::PossessedBy(NewController);
+
+	// 检查能力系统组件和属性集是否都已经初始化
+	// 这两个组件在父类WarriorBaseCharacter中进行初始化
+	if (WarriorAbilitySystemComponent && WarriorAttributeSet)
+	{
+		// 创建调试信息字符串
+		// GetOwnerActor()获取拥有能力系统的Actor
+		// GetAvatarActor()获取表现能力系统的Actor
+		// GetActorLabel()获取Actor的标签名称
+		const FString ASCText = FString::Printf(
+			TEXT("Owner Actor:%s,AvatarActor:%s"),
+			*WarriorAbilitySystemComponent->GetOwnerActor()->GetActorLabel(),
+			*WarriorAbilitySystemComponent->GetAvatarActor()->GetActorLabel());
+
+		// 使用自定义Debug类打印能力系统组件状态信息
+		Debug::Print(TEXT("Ability system component valid"+ASCText), FColor::Green);
+		// 使用自定义Debug类打印属性集状态信息
+		Debug::Print(TEXT("AttributeSet valid"+ASCText), FColor::Green);
+	}
 }
 
 /**

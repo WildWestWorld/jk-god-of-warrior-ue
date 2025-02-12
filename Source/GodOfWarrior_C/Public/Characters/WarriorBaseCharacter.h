@@ -23,8 +23,11 @@ public:
 	// Sets default values for this character's properties
 	AWarriorBaseCharacter();
 
+	//方法 来自 IAbilitySystemInterface 继承IAbilitySystemInterface 必须实现,需要返回UWarriorAbilitySystemComponent 类型  不然报错
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+
 protected:
-	//生命周期
+	//生命周期 来自 APawn
 	//开始控制该角色的时候
 	virtual void PossessedBy(AController* NewController) override;
 
