@@ -26,7 +26,7 @@ enum class EWarriorAbilityActivationPolicy : uint8
  */
 UCLASS()
 class GODOFWARRIOR_C_API UWarriorGameplayAbility : public UGameplayAbility
-{
+{	
 	GENERATED_BODY()
 
 protected:
