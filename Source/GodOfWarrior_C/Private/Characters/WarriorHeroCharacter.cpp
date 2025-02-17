@@ -12,6 +12,7 @@
 #include "AbilitySystem/WarriorAbilitySystemComponent.h"
 #include "Components/Input/WarriorEnhancedInputComponent.h"
 #include "DataAssets/Input/DataAsset_InputConfig.h"
+#include "DataAssets/StartUpData/DataAsset_StartUpDataBase.h"
 
 
 #include "Debug/WarriorDebugHelper.h"
@@ -130,24 +131,18 @@ void AWarriorHeroCharacter::PossessedBy(AController* NewController)
 {
 	// 调用父类的PossessedBy方法
 	Super::PossessedBy(NewController);
-
-	// 检查能力系统组件和属性集是否都已经初始化
-	// 这两个组件在父类WarriorBaseCharacter中进行初始化
-	if (WarriorAbilitySystemComponent && WarriorAttributeSet)
+	// 检查角色升星数据是否存在/有效
+	if (!CharacterStartUpData.IsNull())
 	{
-		// 创建调试信息字符串
-		// GetOwnerActor()获取拥有能力系统的Actor
-		// GetAvatarActor()获取表现能力系统的Actor
-		// GetActorLabel()获取Actor的标签名称
-		const FString ASCText = FString::Printf(
-			TEXT("Owner Actor:%s,AvatarActor:%s"),
-			*WarriorAbilitySystemComponent->GetOwnerActor()->GetActorLabel(),
-			*WarriorAbilitySystemComponent->GetAvatarActor()->GetActorLabel());
-
-		// 使用自定义Debug类打印能力系统组件状态信息
-		Debug::Print(TEXT("Ability system component valid"+ASCText), FColor::Green);
-		// 使用自定义Debug类打印属性集状态信息
-		Debug::Print(TEXT("AttributeSet valid"+ASCText), FColor::Green);
+		// 尝试同步加载数据资源
+		// UDataAsset_StartUpDataBase* 是一个自定义的数据资源类
+		// LoadSynchronous() 会阻塞当前线程直到加载完成
+		if (UDataAsset_StartUpDataBase* LoadedData = CharacterStartUpData.LoadSynchronous())
+		{
+			// 将加载的数据应用到角色的技能系统组件中
+			// 这可能包含了角色升星后获得的新技能、属性加成等数据
+			LoadedData->GiveToAbilitySystemComponent(WarriorAbilitySystemComponent);
+		}
 	}
 }
 

@@ -1,56 +1,97 @@
 // Jackie Lee .All Rgihts Reserved
 
+/**
+* 代码逻辑说明:
+* 1. 这是一个基础角色类，实现了能力系统接口(IAbilitySystemInterface)
+* 2. 主要功能：
+*    - 管理角色的能力系统组件
+*    - 管理角色的属性集
+*    - 处理角色被控制时的初始化
+*    - 提供能力系统相关组件的访问接口
+* 3. 继承关系：
+*    - 继承自UE的Character基类
+*    - 实现能力系统接口以支持GAS功能
+*/
+
 #pragma once
 
-
-//来自于 Gameplay Ability插件 (写入类型IAbilitySystemInterface不会有代码提示，得自己查询导入)
+// 能力系统接口头文件，来自Gameplay Ability插件
 #include "AbilitySystemInterface.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "WarriorBaseCharacter.generated.h"
 
-
+class UDataAsset_StartUpDataBase;
 class UWarriorAttributeSet;
 class UWarriorAbilitySystemComponent;
 
+/**
+* 战士基础角色类
+* 实现了能力系统接口，用于管理角色的能力和属性
+*/
 UCLASS()
 class GODOFWARRIOR_C_API AWarriorBaseCharacter : public ACharacter, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
+	/** 构造函数，设置角色的默认属性值 */
 	AWarriorBaseCharacter();
 
-	//方法 来自 IAbilitySystemInterface 继承IAbilitySystemInterface 必须实现,需要返回UWarriorAbilitySystemComponent 类型  不然报错
+	/**
+	 * 实现自IAbilitySystemInterface的接口方法
+	 * 必须实现此方法以返回角色的能力系统组件
+	 * @return 返回角色的能力系统组件实例
+	 */
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 protected:
-	//生命周期 来自 APawn
-	//开始控制该角色的时候
+	/**
+	 * 重写自APawn的生命周期函数
+	 * 当角色被Controller接管控制权时调用
+	 * @param NewController - 接管控制的Controller实例
+	 */
 	virtual void PossessedBy(AController* NewController) override;
 
-	//能力组件
-	//UWarriorAbilitySystemComponent 是我们自己创建的组件，创建此组件需要 开启Ability System插件
+	/**
+	 * 角色的能力系统组件
+	 * 需要启用Gameplay Ability System插件才能使用
+	 * 负责管理角色的所有能力相关功能
+	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="AbilitySystem")
 	UWarriorAbilitySystemComponent* WarriorAbilitySystemComponent;
-	//人物属性集合
+
+	/**
+	 * 角色的属性集合
+	 * 包含角色的各种基础属性（如生命值、魔法值等）
+	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="AbilitySystem")
 	UWarriorAttributeSet* WarriorAttributeSet;
 
+	/**
+	 * 角色启动数据资产引用
+	 * 使用TSoftObjectPtr以支持异步加载 ，软链接 异步加载
+	 * 包含角色初始化时需要的各种数据
+	 * UDataAsset_StartUpDataBase  放的就是 各种Ability
+	 */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="CharacterData")
+	TSoftObjectPtr<UDataAsset_StartUpDataBase> CharacterStartUpData;
+
 public:
-	// 	什么是内联(Inline)：
-	// 内联是一种编译器优化技术
-	// 当函数被调用时，编译器会直接将函数的代码插入到调用处，而不是进行普通的函数调用
-	// 这样可以避免函数调用的开销(比如压栈、跳转、返回等操作)
-	//FORCEINLINE 强制内联
-	//这里是用于获取我们的能力组件 和人物属性集合的
-	//因为在蓝图中是只读的，所以我们在这里写个public接口 这样这别的地方也可以拿到
+	/**
+	 * 获取角色能力系统组件的内联函数
+	 * 使用FORCEINLINE强制内联以优化性能
+	 * @return 返回角色的能力系统组件实例
+	 */
 	FORCEINLINE UWarriorAbilitySystemComponent* GetWarriorAbilitySystemComponent() const
 	{
 		return WarriorAbilitySystemComponent;
 	}
 
+	/**
+	 * 获取角色属性集的内联函数
+	 * @return 返回角色的属性集实例
+	 */
 	FORCEINLINE UWarriorAttributeSet* GetWarriorAttribute() const { return WarriorAttributeSet; }
 };

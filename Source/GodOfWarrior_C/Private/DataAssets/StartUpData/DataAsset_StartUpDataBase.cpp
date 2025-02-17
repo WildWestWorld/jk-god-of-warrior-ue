@@ -22,18 +22,18 @@
  * 将当前数据资产中的所有能力赋予指定的能力系统组件
  * 该函数会依次处理立即激活能力和响应性能力
  * 
- * @param InWarriorASCToGive - 目标能力系统组件，必须是有效的
+ * @param InASCToGive - 目标能力系统组件，必须是有效的
  * @param ApplyLevel - 能力的应用等级，影响能力初始化时的等级属性
  */
-void UDataAsset_StartUpDataBase::GiveToAbilitySystemComponent(UWarriorAbilitySystemComponent* InWarriorASCToGive,
+void UDataAsset_StartUpDataBase::GiveToAbilitySystemComponent(UWarriorAbilitySystemComponent* InASCToGive,
                                                               int32 ApplyLevel)
 {
     // 确保传入的目标能力系统组件 有效
-    check(InWarriorASCToGive);
+    check(InASCToGive);
     
     // 依次授予两类能力
-    GrantAbilities(ActivateOnGivenAbilities, InWarriorASCToGive, ApplyLevel);
-    GrantAbilities(ReactiveAbilities, InWarriorASCToGive, ApplyLevel);
+    GrantAbilities(ActivateOnGivenAbilities, InASCToGive, ApplyLevel);
+    GrantAbilities(ReactiveAbilities, InASCToGive, ApplyLevel);
 }
 
 /**
@@ -41,7 +41,7 @@ void UDataAsset_StartUpDataBase::GiveToAbilitySystemComponent(UWarriorAbilitySys
  * 为指定的能力系统组件授予一组能力
  * 
  * @param InAbilitiesToGive - 待授予的能力类数组
- * @param InWarriorASCToGive - 目标能力系统组件
+ * @param InASCToGive - 目标能力系统组件
  * @param ApplyLevel - 能力的应用等级
  * 
  * 实现细节：
@@ -53,7 +53,7 @@ void UDataAsset_StartUpDataBase::GiveToAbilitySystemComponent(UWarriorAbilitySys
  * 6. 将能力授予给ASC
  */
 void UDataAsset_StartUpDataBase::GrantAbilities(const TArray<TSubclassOf<UWarriorGameplayAbility>>& InAbilitiesToGive,
-                                                UWarriorAbilitySystemComponent* InWarriorASCToGive, int32 ApplyLevel)
+                                                UWarriorAbilitySystemComponent* InASCToGive, int32 ApplyLevel)
 {
     // 如果能力数组为空，直接返回
     if (InAbilitiesToGive.IsEmpty())
@@ -70,11 +70,11 @@ void UDataAsset_StartUpDataBase::GrantAbilities(const TArray<TSubclassOf<UWarrio
        // 创建能力规格
        FGameplayAbilitySpec AbilitySpec(Ability);
        // 设置能力的源对象为角色
-       AbilitySpec.SourceObject = InWarriorASCToGive->GetAvatarActor();
+       AbilitySpec.SourceObject = InASCToGive->GetAvatarActor();
        // 设置能力等级
        AbilitySpec.Level = ApplyLevel;
 
        // 将能力授予给目标能力系统组件 
-       InWarriorASCToGive->GiveAbility(AbilitySpec);
+       InASCToGive->GiveAbility(AbilitySpec);
     }
 }

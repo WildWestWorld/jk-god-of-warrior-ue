@@ -69,5 +69,7 @@ void AWarriorBaseCharacter::PossessedBy(AController* NewController)
 		//为什么可能不同，其实就是 人与工具的关系，人催动工具，使用的是工具的技能
 
 		WarriorAbilitySystemComponent->InitAbilityActorInfo(this, this);
+		//如果人物没有设置 默认的初始Data 就提示 
+		ensureMsgf(!CharacterStartUpData.IsNull(), TEXT("Forget to assign start up data to %s"), *GetName());
 	}
 }

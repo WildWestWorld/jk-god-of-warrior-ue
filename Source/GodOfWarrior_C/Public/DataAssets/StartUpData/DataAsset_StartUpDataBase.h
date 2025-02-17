@@ -27,10 +27,10 @@ public:
 	 * 将数据资产中定义的能力赋予指定的能力系统组件
 	 * 该函数会处理两类能力：立即激活能力和响应性能力
 	 * 
-	 * @param InWarriorASCToGive - 接收能力的战士能力系统组件实例
+	 * @param InASCToGive - 接收能力的战士能力系统组件实例
 	 * @param ApplyLevel - 能力的应用等级，用于初始化能力的等级属性，默认为1级
 	 */
-	virtual void GiveToAbilitySystemComponent(UWarriorAbilitySystemComponent* InWarriorASCToGive, int32 ApplyLevel = 1);
+	virtual void GiveToAbilitySystemComponent(UWarriorAbilitySystemComponent* InASCToGive, int32 ApplyLevel = 1);
 
 protected:
 	/** 
@@ -59,9 +59,9 @@ protected:
 	 * 静态辅助函数，用于实际执行能力授予操作
 	 * 
 	 * @param InAbilitiesToGive - 待授予的能力类数组
-	 * @param InWarriorASCToGive - 目标能力系统组件
+	 * @param InASCToGive - 目标能力系统组件
 	 * @param ApplyLevel - 能力应用等级
 	 */
 	static void GrantAbilities(const TArray<TSubclassOf<UWarriorGameplayAbility>>& InAbilitiesToGive,
-							   UWarriorAbilitySystemComponent* InWarriorASCToGive, int32 ApplyLevel = 1);
+							   UWarriorAbilitySystemComponent* InASCToGive, int32 ApplyLevel = 1);
 };
