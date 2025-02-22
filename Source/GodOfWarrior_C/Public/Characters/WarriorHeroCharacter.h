@@ -7,6 +7,7 @@
 #include "WarriorHeroCharacter.generated.h"
 
 
+class UHeroCombatComponent;
 // class
 class USpringArmComponent;
 class UCameraComponent;
@@ -35,9 +36,8 @@ protected:
 	virtual void BeginPlay() override;
 
 	//初始化Input组件
-	//不要使用InptComponent作为变量
+	//不要使用InputComponent作为变量
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
-
 
 
 	//生命周期 来自 APawn
@@ -55,6 +55,11 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera", meta=(AllowPrivateAccess="true"))
 	UCameraComponent* FollowCamera;
+
+	//对抗组件 使我们自己定义的
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Combat", meta=(AllowPrivateAccess="true"))
+	UHeroCombatComponent* HeroCombatComponent;
+
 #pragma endregion Components
 
 #pragma region Inputs
@@ -70,4 +75,8 @@ private:
 	//EnhanceInput视角移动函数
 	void Input_Look(const FInputActionValue& InputActionValue);
 #pragma endregion Inputs
+
+public:
+	//获取HeroCombat 组件
+	FORCEINLINE UHeroCombatComponent* GetHeroCombatComponent() const { return HeroCombatComponent; }
 };

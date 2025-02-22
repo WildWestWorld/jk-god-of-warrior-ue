@@ -11,6 +11,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "AbilitySystem/WarriorAbilitySystemComponent.h"
 #include "Components/Input/WarriorEnhancedInputComponent.h"
+#include "Components/Pawn/Combat/HeroCombatComponent.h"
 #include "DataAssets/Input/DataAsset_InputConfig.h"
 #include "DataAssets/StartUpData/DataAsset_StartUpDataBase.h"
 
@@ -60,6 +61,9 @@ AWarriorHeroCharacter::AWarriorHeroCharacter()
 	GetCharacterMovement()->MaxWalkSpeed = 400.f;
 	// 设置角色行走时的制动减速度为2000m/秒，影响角色停止移动时的减速效果
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
+
+	//创建Combat组件
+	HeroCombatComponent = CreateDefaultSubobject<UHeroCombatComponent>(TEXT("HeroCombatComponent"));
 }
 
 //开始的生命周期
