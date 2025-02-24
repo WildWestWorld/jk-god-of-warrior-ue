@@ -4,6 +4,7 @@
 #include "AbilitySystem/Abilities/WarriorGameplayAbility.h"
 
 #include "AbilitySystemComponent.h"
+#include "Components/Pawn/Combat/PawnCombatComponent.h"
 
 /**
  * 当能力被授予时触发的函数
@@ -61,4 +62,9 @@ void UWarriorGameplayAbility::EndAbility(const FGameplayAbilitySpecHandle Handle
 			ActorInfo->AbilitySystemComponent->ClearAbility(Handle);
 		}
 	}
+}
+
+UPawnCombatComponent* UWarriorGameplayAbility::GetPawnCombatComponentFromActorInfo() const
+{
+	return GetAvatarActorFromActorInfo()->FindComponentByClass<UPawnCombatComponent>();
 }

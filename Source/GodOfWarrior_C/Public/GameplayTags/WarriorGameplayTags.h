@@ -17,7 +17,8 @@ namespace WarriorGameplayTags
 	// UE_DECLARE_GAMEPLAY_TAG_EXTERN 是 Unreal Engine 中的宏，它用于声明一个游戏标签的外部引用。
 	// 该宏告诉编译器，InputTag_Move 和 InputTag_Look 将在其他地方定义，而不是在当前文件中定义。
 	GODOFWARRIOR_C_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Move)
-
-
 	GODOFWARRIOR_C_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Look)
+
+	//Player Tags
+	GODOFWARRIOR_C_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Weapon_Axe)
 }

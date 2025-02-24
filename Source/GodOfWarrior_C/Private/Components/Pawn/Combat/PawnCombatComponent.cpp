@@ -3,3 +3,73 @@
 
 #include "Components/Pawn/Combat/PawnCombatComponent.h"
 
+#include "Debug/WarriorDebugHelper.h"
+#include "Items/Weapons/WarriorWeaponBase.h"
+
+/**
+* 注册一个生成的武器到角色的武器映射表中
+* @param InWeaponTagToRegister - 要注册的武器的GameplayTag
+* @param InWeaponToRegister - 要注册的武器实例指针
+* @param bRegisterAsEquippedWeapon - 是否将该武器注册为当前装备的武器
+*/
+void UPawnCombatComponent::RegisterSpawnedWeapon(FGameplayTag InWeaponTagToRegister,
+                                                AWarriorWeaponBase* InWeaponToRegister, bool bRegisterAsEquippedWeapon)
+{
+   // 检查该武器标签是否已经在映射表中存在
+   checkf(!CharacterCarriedWeaponMap.Contains(InWeaponTagToRegister),
+          TEXT("A named %s has already been added as carried weapon"), *InWeaponTagToRegister.ToString());
+
+   // 检查武器标签是否有效
+   checkf(InWeaponTagToRegister.IsValid(),
+          TEXT("Invalid weapon tag provided"));
+
+   // 检查武器指针是否有效
+   checkf(IsValid(InWeaponToRegister),
+          TEXT("Invalid weapon pointer provided"));
+
+   // 将武器添加到映射表中
+   CharacterCarriedWeaponMap.Emplace(InWeaponTagToRegister, InWeaponToRegister);
+
+   // 如果需要将该武器设置为当前装备的武器
+   if (bRegisterAsEquippedWeapon)
+   {
+      CurrentEquippedWeaponTag = InWeaponTagToRegister;
+   }
+   const FString WeaponString = FString::Printf(TEXT("A weapon named: %s has been registered using the tag %s"),*InWeaponToRegister->GetName(),*InWeaponTagToRegister.ToString());
+   Debug::Print(WeaponString);
+   
+}
+
+/**
+* 通过GameplayTag获取角色携带的武器
+* @param InWeaponTagToGet - 要获取的武器的GameplayTag
+* @return 返回找到的武器指针，如果未找到则返回nullptr
+*/
+AWarriorWeaponBase* UPawnCombatComponent::GetCharacterCarriedWeaponByTag(FGameplayTag InWeaponTagToGet) const
+{
+   // 检查映射表中是否包含该武器标签
+   if (CharacterCarriedWeaponMap.Contains(InWeaponTagToGet))
+   {
+      // 尝试从映射表中找到对应的武器
+      if (AWarriorWeaponBase* const* FoundWeapon = CharacterCarriedWeaponMap.Find(InWeaponTagToGet))
+      {
+         return *FoundWeapon;
+      }
+   }
+   return nullptr;
+}
+
+/**
+* 获取角色当前装备的武器
+* @return 返回当前装备的武器指针，如果没有装备武器则返回nullptr
+*/
+AWarriorWeaponBase* UPawnCombatComponent::GetCharacterCurrentEquippedWeapon() const
+{
+   // 检查当前装备的武器标签是否有效
+   if (!CurrentEquippedWeaponTag.IsValid())
+   {
+      return nullptr;
+   }
+   // 通过当前装备的武器标签获取武器实例
+   return GetCharacterCarriedWeaponByTag(CurrentEquippedWeaponTag);
+}

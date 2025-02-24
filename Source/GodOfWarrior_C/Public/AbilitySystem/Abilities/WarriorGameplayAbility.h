@@ -6,6 +6,7 @@
 #include "Abilities/GameplayAbility.h"
 #include "WarriorGameplayAbility.generated.h"
 
+class UPawnCombatComponent;
 /**
  * 战士角色 能力激活策略枚举
  * 在蓝图中用于定义能力的激活时机
@@ -26,7 +27,7 @@ enum class EWarriorAbilityActivationPolicy : uint8
  */
 UCLASS()
 class GODOFWARRIOR_C_API UWarriorGameplayAbility : public UGameplayAbility
-{	
+{
 	GENERATED_BODY()
 
 protected:
@@ -61,4 +62,7 @@ protected:
 	//我们会在蓝图 里面更改默认的激活策略
 	UPROPERTY(EditDefaultsOnly, Category="WarriorAbility")
 	EWarriorAbilityActivationPolicy AbilityActivationPolicy = EWarriorAbilityActivationPolicy::OnTriggered;
+
+	UFUNCTION(BlueprintPure, Category="Warrior|Ability")
+	UPawnCombatComponent* GetPawnCombatComponentFromActorInfo() const;
 };
