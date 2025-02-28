@@ -6,6 +6,7 @@
 #include "Abilities/GameplayAbility.h"
 #include "WarriorGameplayAbility.generated.h"
 
+class UWarriorAbilitySystemComponent;
 class UPawnCombatComponent;
 /**
  * 战士角色 能力激活策略枚举
@@ -60,9 +61,23 @@ protected:
 
 	//设置默认的激活策略
 	//我们会在蓝图 里面更改默认的激活策略
+	/** 
+	 * 能力的激活策略
+	 * 可在蓝图中设置为OnTriggered(条件触发)或OnGiven(赋予时激活)
+	 * 默认为OnTriggered
+	 * EditDefaultsOnly: 只允许在蓝图类默认值中编辑,实例中无法更改
+	 */
 	UPROPERTY(EditDefaultsOnly, Category="WarriorAbility")
 	EWarriorAbilityActivationPolicy AbilityActivationPolicy = EWarriorAbilityActivationPolicy::OnTriggered;
 
-	UFUNCTION(BlueprintPure, Category="Warrior|Ability")
+	/**
+	 * 从ActorInfo中获取PawnCombatComponent组件
+	 * @return 返回拥有该能力的Actor的战斗组件指针
+	 * BlueprintPure: 表示这是一个纯函数,不会修改任何状态,可以在蓝图中安全调用
+	 */
+	UFUNCTION(BlueprintPure, Category="Warrior|Ability") 
 	UPawnCombatComponent* GetPawnCombatComponentFromActorInfo() const;
+
+	UFUNCTION(BlueprintPure, Category="Warrior|Ability")
+	UWarriorAbilitySystemComponent* GetWarriorAbilitySystemComponentFromActorInfo() const;
 };
