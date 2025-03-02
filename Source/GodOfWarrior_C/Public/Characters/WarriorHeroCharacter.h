@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "Characters/WarriorBaseCharacter.h"
 #include "WarriorHeroCharacter.generated.h"
 
@@ -74,6 +75,14 @@ private:
 	void Input_Move(const FInputActionValue& InputActionValue);
 	//EnhanceInput视角移动函数
 	void Input_Look(const FInputActionValue& InputActionValue);
+	// 当技能输入按下时调用的函数
+	// @param InputTag - 与按下输入关联的游戏标签，用于识别具体是哪个技能输入
+	void Input_AbilityInputPressed(FGameplayTag InputTag);
+
+	// 当技能输入释放时调用的函数
+	// @param InputTag - 与释放输入关联的游戏标签，用于识别具体是哪个技能输入
+	void Input_AbilityInputReleased(FGameplayTag InputTag);
+
 #pragma endregion Inputs
 
 public:

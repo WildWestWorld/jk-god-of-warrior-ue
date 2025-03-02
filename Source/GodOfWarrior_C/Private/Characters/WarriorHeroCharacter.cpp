@@ -1,6 +1,5 @@
 // Jackie Lee .All Rights Reserved
 
-
 #include "Characters/WarriorHeroCharacter.h"
 
 // 添加调试器
@@ -15,7 +14,6 @@
 #include "DataAssets/Input/DataAsset_InputConfig.h"
 #include "DataAssets/StartUpData/DataAsset_StartUpDataBase.h"
 
-
 #include "Debug/WarriorDebugHelper.h"
 #include "GameplayTags/WarriorGameplayTags.h"
 
@@ -24,16 +22,16 @@ AWarriorHeroCharacter::AWarriorHeroCharacter()
 {
 	// 初始化胶囊
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.f);
-	//禁用原生鼠标控制
+	// 禁用原生鼠标控制
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
 
-	//创建弹簧臂
+	// 创建弹簧臂
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
-	//添加弹簧臂(GetRootComponent:根节点)
+	// 添加弹簧臂(GetRootComponent:根节点)
 	CameraBoom->SetupAttachment(GetRootComponent());
-	//设置弹簧臂的长度
+	// 设置弹簧臂的长度
 	CameraBoom->TargetArmLength = 200.f;
 	// CameraBoom->SocketOffset = FVector(0.f, 55.f, 65.f); 的作用是调整相机的位置偏移，使相机相对于 SpringArm（即角色的背后）稍微向右偏移 55 单位，向上偏移 65 单位。
 	// 这使得相机在游戏中能更好地跟随角色，并保持理想的视角。
@@ -42,15 +40,15 @@ AWarriorHeroCharacter::AWarriorHeroCharacter()
 	// 这使得 Spring Arm 的方向会随着角色的旋转而变化，通常用于第三人称相机视角。
 	// 如果设置为 true，相机会随着角色的旋转而旋转，从而始终跟随角色的朝向。
 	// 如果设置为 false，相机的位置和旋转会由其他因素（如物理或动画）控制，而不直接依赖于角色的旋转。
-	//让弹簧臂旋转，相机会随着弹簧臂旋转
+	// 让弹簧臂旋转，相机会随着弹簧臂旋转
 	CameraBoom->bUsePawnControlRotation = true;
 
-	//创建相机
+	// 创建相机
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
-	//附着到相机上
-	// SocketName 用来标识 CameraBoom 上的默认插槽，确保摄像机在该位置附加并跟随弹簧臂的运动。
+	// 附着到相机上
+	//  SocketName 用来标识 CameraBoom 上的默认插槽，确保摄像机在该位置附加并跟随弹簧臂的运动。
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
-	//让弹簧臂旋转，相机会随着弹簧臂旋转,相机不旋转
+	// 让弹簧臂旋转，相机会随着弹簧臂旋转,相机不旋转
 	FollowCamera->bUsePawnControlRotation = false;
 
 	// 设置角色朝向移动方向 - 当角色移动时，会自动旋转面向移动方向
@@ -62,20 +60,19 @@ AWarriorHeroCharacter::AWarriorHeroCharacter()
 	// 设置角色行走时的制动减速度为2000m/秒，影响角色停止移动时的减速效果
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 
-	//创建Combat组件
+	// 创建Combat组件
 	HeroCombatComponent = CreateDefaultSubobject<UHeroCombatComponent>(TEXT("HeroCombatComponent"));
 }
 
-//开始的生命周期
+// 开始的生命周期
 void AWarriorHeroCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//Debug 命名空间
-	//Print调用 命名空间的打印函数
+	// Debug 命名空间
+	// Print调用 命名空间的打印函数
 	Debug::Print(TEXT("Working"));
 }
-
 
 // 生命周期
 // A[Actor 创建] --> B[构造函数]
@@ -83,12 +80,12 @@ void AWarriorHeroCharacter::BeginPlay()
 // C --> D[BeginPlay]
 // D --> E[正常游戏循环]
 
-//初始化Input组件
-//不要使用InputComponent 作为变量名
+// 初始化Input组件
+// 不要使用InputComponent 作为变量名
 /**
-* 设置玩家输入组件，配置增强输入系统
-* @param PlayerInputComponent - 输入组件指针
-*/
+ * 设置玩家输入组件，配置增强输入系统
+ * @param PlayerInputComponent - 输入组件指针
+ */
 // SetupPlayerInputComponent 和 BeginPlay 一样会自己运行
 // UInputComponent* PlayerInputComponent 是函数返回值 e
 void AWarriorHeroCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -101,8 +98,8 @@ void AWarriorHeroCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 	// 获取本地玩家
 	ULocalPlayer* LocalPlayer = GetController<APlayerController>()->GetLocalPlayer();
 	// 获取增强输入子系统，拿子系统是为了放MappingContext
-	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem
-		<UEnhancedInputLocalPlayerSubsystem>(LocalPlayer);
+	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<
+		UEnhancedInputLocalPlayerSubsystem>(LocalPlayer);
 	// 确保子系统存在
 	check(Subsystem);
 	// 添加默认输入映射上下文
@@ -111,26 +108,35 @@ void AWarriorHeroCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 
 	// UWarriorEnhancedInputComponent 使我们自定义的类
 	// 转换为增强输入组件
-	//为什么能转化？因为UWarriorEnhancedInputComponent 创建的时候就继承自UWarriorEnhancedInputComponent
+	// 为什么能转化？因为UWarriorEnhancedInputComponent 创建的时候就继承自UWarriorEnhancedInputComponent
 	UWarriorEnhancedInputComponent* WarriorEnhancedInputComponent = CastChecked<UWarriorEnhancedInputComponent>(
 		PlayerInputComponent);
 
 	// EnhanceInput绑定移动输入动作
-	//不使用，移动不了人物
+	// 不使用，移动不了人物
 	WarriorEnhancedInputComponent->BindNativeInputAction(InputConfigDataAsset, WarriorGameplayTags::InputTag_Move,
 	                                                     ETriggerEvent::Triggered, this, &ThisClass::Input_Move);
 
-	//EnhanceInput绑定观察/鼠标移动动作
-	//不使用，移动不了镜头
+	// EnhanceInput绑定观察/鼠标移动动作
+	// 不使用，移动不了镜头
 	WarriorEnhancedInputComponent->BindNativeInputAction(InputConfigDataAsset, WarriorGameplayTags::InputTag_Look,
 	                                                     ETriggerEvent::Triggered, this, &ThisClass::Input_Look);
+	// 绑定技能输入动作
+	// @param InputConfigDataAsset - 包含输入配置的数据资产
+	// @param this - 当前角色实例
+	// @param Input_AbilityInputPressed - 按下输入时调用的回调函数
+	// @param Input_AbilityInputReleased - 释放输入时调用的回调函数
+	//BindAbilityInputAction 是哦们自己写的事件
+	WarriorEnhancedInputComponent->BindAbilityInputAction(InputConfigDataAsset, this,
+	                                                      &ThisClass::Input_AbilityInputPressed,
+	                                                      &ThisClass::Input_AbilityInputReleased);
 }
 
-//生命周期
+// 生命周期
 /**
-* 当角色被Controller控制时调用此函数
-* @param NewController 接管控制的Controller指针
-*/
+ * 当角色被Controller控制时调用此函数
+ * @param NewController 接管控制的Controller指针
+ */
 void AWarriorHeroCharacter::PossessedBy(AController* NewController)
 {
 	// 调用父类的PossessedBy方法
@@ -220,4 +226,24 @@ void AWarriorHeroCharacter::Input_Look(const FInputActionValue& InputActionValue
 		// LookAxisVector.Y: 正值表示向上看，负值表示向下看
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
+}
+
+/**
+ * 处理技能输入按下事件的函数
+ * 当玩家按下技能按键时调用此函数
+ * @param InputTag - 与按下输入关联的游戏标签，用于识别具体是哪个技能输入
+ */
+void AWarriorHeroCharacter::Input_AbilityInputPressed(FGameplayTag InputTag)
+{
+	WarriorAbilitySystemComponent->OnAbilityInputPressed(InputTag);
+}
+
+/**
+ * 处理技能输入释放事件的函数
+ * 当玩家释放技能按键时调用此函数
+ * @param InputTag - 与释放输入关联的游戏标签，用于识别具体是哪个技能输入
+ */
+void AWarriorHeroCharacter::Input_AbilityInputReleased(FGameplayTag InputTag)
+{
+	WarriorAbilitySystemComponent->OnAbilityInputReleased(InputTag);
 }
