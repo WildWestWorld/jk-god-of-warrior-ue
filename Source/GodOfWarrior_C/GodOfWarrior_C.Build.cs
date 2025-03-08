@@ -43,6 +43,13 @@ public class GodOfWarrior_C : ModuleRules
 		// 添加私有依赖模块
 		PrivateDependencyModuleNames.AddRange(new string[] { });
 
+
+		// 只在 Editor 模式下加载 BlueprintAssist
+		if (Target.Type == TargetType.Editor)
+		{
+			PrivateDependencyModuleNames.Add("BlueprintAssist");
+		}
+
 		// 如果需要使用Slate UI，取消下面的注释
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
 
