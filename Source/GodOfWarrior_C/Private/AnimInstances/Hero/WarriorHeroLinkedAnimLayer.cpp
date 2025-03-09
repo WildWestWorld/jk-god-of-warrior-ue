@@ -3,6 +3,8 @@
 
 #include "AnimInstances/Hero/WarriorHeroLinkedAnimLayer.h"
 
+#include "AnimInstances/Hero/WarriorHeroAnimInstance.h"
+
 /**
  * 获取英雄角色动画实例
  * 该函数通过以下步骤获取动画实例:

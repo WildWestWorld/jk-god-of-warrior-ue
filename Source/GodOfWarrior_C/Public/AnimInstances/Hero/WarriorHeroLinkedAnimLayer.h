@@ -3,10 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "WarriorHeroAnimInstance.h"
 #include "AnimInstances/WarriorBaseAnimInstance.h"
 #include "WarriorHeroLinkedAnimLayer.generated.h"
 
+class UWarriorHeroAnimInstance;
 /**
  * 英雄角色动画链接层类
  * 该类用于连接和管理英雄角色的动画实例
