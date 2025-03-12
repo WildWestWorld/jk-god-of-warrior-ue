@@ -5,28 +5,9 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "DataAssets/StartUpData/DataAsset_StartUpDataBase.h"
+#include "WarriorTypes/WarriorStructTypes.h"
 #include "DataAsset_HeroStartUpData.generated.h"
 
-/**
- * 英雄技能配置结构体
- * 用于配置英雄初始技能及其对应的输入标签
- */
-USTRUCT(BlueprintType)
-struct FWarriorHeroAbilitySet
-{
-	GENERATED_BODY()
-
-	// 技能对应的输入标签，用于将技能与特定输入绑定
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (Categories = "InputTag"))
-	FGameplayTag InputTag;
-
-	// 要授予的技能类，指定英雄可以获得的具体技能
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TSubclassOf<UWarriorGameplayAbility> AbilityToGrant;
-
-	// 检查技能配置是否有效
-	bool IsValid() const;
-};
 
 /**
  * 英雄初始数据资产类

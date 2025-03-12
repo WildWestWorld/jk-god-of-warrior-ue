@@ -6,14 +6,6 @@
 #include "AbilitySystem/WarriorAbilitySystemComponent.h"
 #include "AbilitySystem/Abilities/WarriorGameplayAbility.h"
 
-/**
- * 检查英雄技能配置是否有效
- * @return 如果输入标签和技能类都有效则返回true，否则返回false
- */
-bool FWarriorHeroAbilitySet::IsValid() const
-{
-	return InputTag.IsValid() && AbilityToGrant;
-}
 
 /**
  * 将英雄初始技能授予给指定的技能系统组件
