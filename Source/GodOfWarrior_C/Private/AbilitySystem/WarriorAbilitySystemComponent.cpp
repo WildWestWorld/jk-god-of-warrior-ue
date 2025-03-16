@@ -5,6 +5,7 @@
 
 // 不加 AbilitySpec 用不了
 #include "AbilitySystem/Abilities/WarriorGameplayAbility.h"
+#include "Debug/WarriorDebugHelper.h"
 
 /**
  * 处理技能输入按下事件
@@ -57,28 +58,51 @@ void UWarriorAbilitySystemComponent::GrantHeroWeaponAbilities(
 		return;
 	}
 
+
 	// 遍历每个武器技能配置，依次授予技能
 	for (const FWarriorHeroAbilitySet& AbilitySet : InDefaultWeaponAbilities)
 	{
 		// 检查技能配置是否有效（包含有效的技能类和输入标签）
 		if (!AbilitySet.IsValid()) continue;
 
+
 		// 使用技能类创建一个新的技能规格实例
 		FGameplayAbilitySpec AbilitySpec(AbilitySet.AbilityToGrant);
-		
+
+
 		// 设置技能的来源对象为当前角色（即技能系统组件所属的角色）
 		AbilitySpec.SourceObject = GetAvatarActor();
-		
+
 		// 设置技能的等级，影响技能的威力或效果
 		AbilitySpec.Level = ApplyLevel;
-		
+
 		// 为技能添加输入标签，这些标签用于将技能与特定的输入事件关联
 		AbilitySpec.GetDynamicSpecSourceTags().AddTag(AbilitySet.InputTag);
-		
-		// 将技能授予给角色，这里调用了两次GiveAbility是一个bug
-		GiveAbility(AbilitySpec);
-		
+
 		// 将授予的技能句柄添加到输出数组中，确保不会重复添加相同的句柄
 		OutGrantedAbilitySpecHandles.AddUnique(GiveAbility(AbilitySpec));
 	}
+}
+
+
+void UWarriorAbilitySystemComponent::RemovedGrantedHeroWeaponAbilities(
+	UPARAM(ref)TArray<FGameplayAbilitySpecHandle>& InSpecHandlesToRemove)
+{
+	// 检查传入的句柄数组是否为空,为空则直接返回
+	if (InSpecHandlesToRemove.IsEmpty()) return;
+
+	// 遍历每个技能句柄
+	for (const FGameplayAbilitySpecHandle SpecHandle : InSpecHandlesToRemove)
+	{
+		// 检查技能句柄是否有效
+		if (SpecHandle.IsValid())
+		{
+			// 移除该技能句柄对应的能力
+			//ClearAbility该方法来自于 父组件UAbilitySystemComponent
+			ClearAbility(SpecHandle);
+		}
+	}
+
+	// 清空句柄数组,防止重复移除
+	InSpecHandlesToRemove.Empty();
 }

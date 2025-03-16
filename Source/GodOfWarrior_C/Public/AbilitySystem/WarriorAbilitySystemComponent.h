@@ -43,12 +43,34 @@ public:
 	 * 可在蓝图中调用，用于动态给角色添加武器技能
 	 * 
 	 * @param InDefaultWeaponAbilities - 要授予的武器技能配置数组，包含技能类和对应的输入标签
-	 * @param ApplyLevel - 授予技能的等级，在元数据中显示默认值提示为1
-	 * @param OutGrantedAbilitySpecHandles
+	 * @param ApplyLevel - 授予技能的等级，默认值为1
+	 * @param OutGrantedAbilitySpecHandles - 输出参数，用于存储授予的技能特征句柄
 	 * 
 	 * 通常在切换武器或初始化角色装备时调用
+	 * 该函数会将传入的技能配置转换为实际的游戏能力并授予给角色
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Warrior|Ability", meta=(ApplyLevel ="1"))
 	void GrantHeroWeaponAbilities(const TArray<FWarriorHeroAbilitySet>& InDefaultWeaponAbilities, int32 ApplyLevel,
 	                              TArray<FGameplayAbilitySpecHandle>& OutGrantedAbilitySpecHandles);
+
+	/**
+	 * 移除已授予的英雄武器技能
+	 * 可在蓝图中调用，用于动态移除角色的武器技能
+	 * 
+	 * @param InSpecHandlesToRemove - 要移除的技能特征句柄数组，传入要移除的技能句柄列表
+	 *        使用UPARAM(ref)标记该参数为引用传递，这样在蓝图中调用时:
+	 *        - 可以直接修改原始数组内容
+	 *        - 避免数组复制带来的性能开销
+	 *        - 保证函数内对数组的修改能反映到调用处
+	 * 
+	 * 通常在以下情况调用:
+	 * - 切换武器时移除旧武器的技能
+	 * - 卸下武器时移除相关技能
+	 * - 角色死亡时清理技能
+	 * 
+	 * 该函数会遍历传入的句柄数组，依次移除对应的游戏能力
+	 * 移除后这些技能将无法再次使用，除非重新授予
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Warrior|Ability")
+	void RemovedGrantedHeroWeaponAbilities(UPARAM(ref) TArray<FGameplayAbilitySpecHandle>& InSpecHandlesToRemove);
 };
