@@ -33,7 +33,7 @@ public:
 	 * 可在蓝图中调用，用于设置武器的能力特征
 	 */
 	UFUNCTION(BlueprintCallable)
-	void AssignGrantedAbilitySpecHandles(const TArray<FGameplayAbilitySpecHandle>& InSpecHandles);
+	void AssignGrantedAbilitySpecHandles(const TArray<FGameplayAbilitySpecHandle> &InSpecHandles);
 
 	/**
 	 * 获取已分配的能力特征句柄
@@ -44,7 +44,7 @@ public:
 	TArray<FGameplayAbilitySpecHandle> GetGrantedAbilitySpecHandles() const;
 
 private:
-	/** 
+	/**
 	 * 存储武器当前拥有的能力特征句柄
 	 * 用于追踪和管理武器具有的游戏能力
 	 */
