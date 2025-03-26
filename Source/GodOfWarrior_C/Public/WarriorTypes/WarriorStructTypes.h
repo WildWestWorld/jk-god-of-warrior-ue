@@ -7,8 +7,8 @@
 
 // 前向声明所需的类
 class UInputMappingContext;
-class UWarriorGameplayAbility;
 class UWarriorHeroLinkedAnimLayer;
+class UWarriorHeroGameplayAbility;
 
 
 /**
@@ -27,7 +27,7 @@ struct FWarriorHeroAbilitySet
 
 	// 要授予的技能类，指定英雄可以获得的具体技能
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TSubclassOf<UWarriorGameplayAbility> AbilityToGrant;
+	TSubclassOf<UWarriorHeroGameplayAbility> AbilityToGrant;
 
 	// 检查技能配置是否有效
 	bool IsValid() const;
