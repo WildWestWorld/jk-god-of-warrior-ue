@@ -34,6 +34,18 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Combat")
 	UEnemyCombatComponent* EnemyCombatComponent;
 
+	/**
+	 * 当角色被控制器占有时调用
+	 * 重写自父类的虚函数
+	 * 用于在AI控制器开始控制该敌人角色时进行初始化设置
+	 * 
+	 * @param NewController - 接管控制的新控制器实例
+	 */
+	virtual void PossessedBy(AController* NewController) override;
+
+private:
+	void InitEnemyStartUpData();
+
 public:
 	/**
 	 * 获取敌人战斗组件的访问器

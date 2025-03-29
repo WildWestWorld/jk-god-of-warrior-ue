@@ -36,4 +36,7 @@ namespace WarriorGameplayTags
 
 	//Status Tags
 	UE_DEFINE_GAMEPLAY_TAG(Player_Status_Attack_JumpToFinish, "Player.Status.Attack.JumpToFinish")
+
+	//Enemy Tags
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Weapon, "Enemy.Weapon")
 }
