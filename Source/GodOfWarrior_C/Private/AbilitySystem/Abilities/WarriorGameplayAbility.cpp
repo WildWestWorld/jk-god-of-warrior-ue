@@ -82,5 +82,5 @@ UPawnCombatComponent* UWarriorGameplayAbility::GetPawnCombatComponentFromActorIn
 UWarriorAbilitySystemComponent* UWarriorGameplayAbility::GetWarriorAbilitySystemComponentFromActorInfo() const
 {
 	// 将当前Actor的能力系统组件转换为WarriorAbilitySystemComponent类型并返回
-	return Cast<UWarriorAbilitySystemComponent>(CurrentActorInfo->AbilitySystemComponent	);
+	return Cast<UWarriorAbilitySystemComponent>(CurrentActorInfo->AbilitySystemComponent);
 }

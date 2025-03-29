@@ -5,6 +5,7 @@
 
 // 不加 AbilitySpec 用不了
 #include "AbilitySystem/Abilities/WarriorGameplayAbility.h"
+#include "AbilitySystem/Abilities/WarriorHeroGameplayAbility.h"
 #include "Debug/WarriorDebugHelper.h"
 
 /**
@@ -67,7 +68,7 @@ void UWarriorAbilitySystemComponent::GrantHeroWeaponAbilities(
 
 
 		// 使用技能类创建一个新的技能规格实例
-		FGameplayAbilitySpec AbilitySpec(AbilitySet.AbilityToGrant);
+		FGameplayAbilitySpec AbilitySpec(AbilitySet.AbilityToGrant.Get());
 
 
 		// 设置技能的来源对象为当前角色（即技能系统组件所属的角色）
