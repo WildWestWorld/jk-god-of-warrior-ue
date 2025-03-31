@@ -6,6 +6,7 @@
 #include "Engine/DataAsset.h"
 #include "DataAsset_StartUpDataBase.generated.h"
 
+class UGameplayEffect;
 class UWarriorAbilitySystemComponent;
 class UWarriorGameplayAbility;
 
@@ -63,5 +64,13 @@ protected:
 	 * @param ApplyLevel - 能力应用等级
 	 */
 	static void GrantAbilities(const TArray<TSubclassOf<UWarriorGameplayAbility>>& InAbilitiesToGive,
-							   UWarriorAbilitySystemComponent* InASCToGive, int32 ApplyLevel = 1);
+	                           UWarriorAbilitySystemComponent* InASCToGive, int32 ApplyLevel = 1);
+
+	/**
+	 * 启动时需要应用的游戏效果数组
+	 * 这些效果会在游戏开始时自动应用到角色身上
+	 * 用于设置角色的初始状态、属性修改器等持续性效果
+	 */
+	UPROPERTY(EditDefaultsOnly, Category="StartUpData")
+	TArray<TSubclassOf<UGameplayEffect>> StartUpGameplayEffects;
 };

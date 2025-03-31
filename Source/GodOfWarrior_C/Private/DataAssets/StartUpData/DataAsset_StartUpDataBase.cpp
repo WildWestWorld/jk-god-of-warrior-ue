@@ -28,12 +28,29 @@
 void UDataAsset_StartUpDataBase::GiveToAbilitySystemComponent(UWarriorAbilitySystemComponent* InASCToGive,
                                                               int32 ApplyLevel)
 {
-    // 确保传入的目标能力系统组件 有效
-    check(InASCToGive);
-    
-    // 依次授予两类能力
-    GrantAbilities(ActivateOnGivenAbilities, InASCToGive, ApplyLevel);
-    GrantAbilities(ReactiveAbilities, InASCToGive, ApplyLevel);
+	// 确保传入的目标能力系统组件有效
+	check(InASCToGive);
+
+	// 依次授予两类能力:立即激活能力和响应性能力
+	GrantAbilities(ActivateOnGivenAbilities, InASCToGive, ApplyLevel);
+	GrantAbilities(ReactiveAbilities, InASCToGive, ApplyLevel);
+
+	// 如果存在启动时需要应用的游戏效果
+	if (!StartUpGameplayEffects.IsEmpty())
+	{
+		// 遍历所有游戏效果
+		for (const TSubclassOf<UGameplayEffect>& EffectClass : StartUpGameplayEffects)
+		{
+			// 跳过无效的效果类
+			if (!EffectClass) continue;
+			
+			// 获取效果类的默认对象
+			UGameplayEffect* EffectCDO = EffectClass->GetDefaultObject<UGameplayEffect>();
+			
+			// 将效果应用到自身，使用指定的等级和新创建的效果上下文
+			InASCToGive->ApplyGameplayEffectToSelf(EffectCDO, ApplyLevel, InASCToGive->MakeEffectContext());
+		}
+	}
 }
 
 /**
@@ -55,26 +72,26 @@ void UDataAsset_StartUpDataBase::GiveToAbilitySystemComponent(UWarriorAbilitySys
 void UDataAsset_StartUpDataBase::GrantAbilities(const TArray<TSubclassOf<UWarriorGameplayAbility>>& InAbilitiesToGive,
                                                 UWarriorAbilitySystemComponent* InASCToGive, int32 ApplyLevel)
 {
-    // 如果能力数组为空，直接返回
-    if (InAbilitiesToGive.IsEmpty())
-    {
-       return;
-    }
+	// 如果能力数组为空，直接返回
+	if (InAbilitiesToGive.IsEmpty())
+	{
+		return;
+	}
 
-    // 遍历所有待授予的能力
-    for (const TSubclassOf<UWarriorGameplayAbility>& Ability : InAbilitiesToGive)
-    {
-       // 跳过无效的能力类
-       if (!Ability) continue;
+	// 遍历所有待授予的能力
+	for (const TSubclassOf<UWarriorGameplayAbility>& Ability : InAbilitiesToGive)
+	{
+		// 跳过无效的能力类
+		if (!Ability) continue;
 
-       // 创建能力规格
-       FGameplayAbilitySpec AbilitySpec(Ability);
-       // 设置能力的源对象为角色
-       AbilitySpec.SourceObject = InASCToGive->GetAvatarActor();
-       // 设置能力等级
-       AbilitySpec.Level = ApplyLevel;
+		// 创建能力规格
+		FGameplayAbilitySpec AbilitySpec(Ability);
+		// 设置能力的源对象为角色
+		AbilitySpec.SourceObject = InASCToGive->GetAvatarActor();
+		// 设置能力等级
+		AbilitySpec.Level = ApplyLevel;
 
-       // 将能力授予给目标能力系统组件 
-       InASCToGive->GiveAbility(AbilitySpec);
-    }
+		// 将能力授予给目标能力系统组件 
+		InASCToGive->GiveAbility(AbilitySpec);
+	}
 }
