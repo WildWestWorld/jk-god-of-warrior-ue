@@ -52,6 +52,12 @@ AWarriorEnemyCharacter::AWarriorEnemyCharacter()
 	// 该组件负责处理敌人的战斗相关功能,如攻击、受伤等
 	EnemyCombatComponent = CreateDefaultSubobject<UEnemyCombatComponent>("EnemyCombatComponent");
 }
+
+UPawnCombatComponent* AWarriorEnemyCharacter::GetPawnCombatComponent() const
+{
+	return EnemyCombatComponent                             ;
+}
+
 /**
  * 当角色被控制器占有时调用
  * 重写自父类的虚函数
@@ -77,27 +83,27 @@ void AWarriorEnemyCharacter::PossessedBy(AController* NewController)
  */
 void AWarriorEnemyCharacter::InitEnemyStartUpData()
 {
-    // 检查启动数据是否为空,如果为空则直接返回
-    if (CharacterStartUpData.IsNull())
-    {
-        return;
-    }
+	// 检查启动数据是否为空,如果为空则直接返回
+	if (CharacterStartUpData.IsNull())
+	{
+		return;
+	}
 
-    // 使用资产管理器获取流式管理器,请求异步加载启动数据
-    UAssetManager::GetStreamableManager().RequestAsyncLoad(
-        // 将软对象引用转换为路径用于加载
-        CharacterStartUpData.ToSoftObjectPath(),
-        // 创建一个Lambda表达式作为加载完成后的回调
-        FStreamableDelegate::CreateLambda([this]()
-        {
-            // 尝试获取加载完成的数据资产
-            if (UDataAsset_StartUpDataBase* LoadedData = CharacterStartUpData.Get())
-            {
-                // 将加载的数据应用到角色的能力系统组件
-                LoadedData->GiveToAbilitySystemComponent(WarriorAbilitySystemComponent);
-                // 打印调试信息表示数据加载成功
-                Debug::Print(TEXT("Enemy Start Up Data Loaded"), FColor::Green);
-            }
-        })
-    );
+	// 使用资产管理器获取流式管理器,请求异步加载启动数据
+	UAssetManager::GetStreamableManager().RequestAsyncLoad(
+		// 将软对象引用转换为路径用于加载
+		CharacterStartUpData.ToSoftObjectPath(),
+		// 创建一个Lambda表达式作为加载完成后的回调
+		FStreamableDelegate::CreateLambda([this]()
+		{
+			// 尝试获取加载完成的数据资产
+			if (UDataAsset_StartUpDataBase* LoadedData = CharacterStartUpData.Get())
+			{
+				// 将加载的数据应用到角色的能力系统组件
+				LoadedData->GiveToAbilitySystemComponent(WarriorAbilitySystemComponent);
+				// 打印调试信息表示数据加载成功
+				Debug::Print(TEXT("Enemy Start Up Data Loaded"), FColor::Green);
+			}
+		})
+	);
 }

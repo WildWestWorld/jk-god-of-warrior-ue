@@ -27,6 +27,10 @@ public:
 	// init
 	AWarriorHeroCharacter();
 
+
+	//来自于BaseCharacter/IPawnCombatInterface
+	virtual UPawnCombatComponent* GetPawnCombatComponent() const override;
+
 protected:
 	// protected：这个访问修饰符表示 BeginPlay 函数只能在类内部以及派生类中访问，外部不能访问。
 	// virtual：这个关键字表示该函数是虚函数，派生类可以覆盖（重写）它。

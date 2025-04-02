@@ -24,6 +24,10 @@ public:
 	 */
 	AWarriorEnemyCharacter();
 
+
+	//来自于BaseCharacter/IPawnCombatInterface
+	virtual UPawnCombatComponent* GetPawnCombatComponent() const override;
+
 protected:
 	/**
 	 * 敌人战斗组件

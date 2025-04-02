@@ -19,7 +19,9 @@
 #include "AbilitySystemInterface.h"
 
 #include "CoreMinimal.h"
+#include "Components/Pawn/Combat/PawnCombatComponent.h"
 #include "GameFramework/Character.h"
+#include "Interfaces/PawnCombatInterface.h"
 #include "WarriorBaseCharacter.generated.h"
 
 class UDataAsset_StartUpDataBase;
@@ -29,9 +31,11 @@ class UWarriorAbilitySystemComponent;
 /**
 * 战士基础角色类
 * 实现了能力系统接口，用于管理角色的能力和属性
+* IPawnCombatInterface 是我们自己写的类
 */
 UCLASS()
-class GODOFWARRIOR_C_API AWarriorBaseCharacter : public ACharacter, public IAbilitySystemInterface
+class GODOFWARRIOR_C_API AWarriorBaseCharacter : public ACharacter, public IAbilitySystemInterface,
+                                                 public IPawnCombatInterface
 {
 	GENERATED_BODY()
 
@@ -45,6 +49,8 @@ public:
 	 * @return 返回角色的能力系统组件实例
 	 */
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	//来自于IPawnCombatInterface
+	virtual UPawnCombatComponent* GetPawnCombatComponent() const override;
 
 protected:
 	/**

@@ -4,6 +4,7 @@
 #include "BlueprintFunctionLibrary/WarriorBlueprintFunctionLibrary.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystem/WarriorAbilitySystemComponent.h"
+#include "Interfaces/PawnCombatInterface.h"
 
 /**
  * 从Actor获取WarriorAbilitySystemComponent组件
@@ -108,4 +109,56 @@ void UWarriorBlueprintFunctionLibrary::BP_IsActorHasTag(AActor* InActor, FGamepl
 {
 	// 根据标签检查结果设置确认类型
 	OutConfirmType = NativeIsActorHasTag(InActor, TagToCheck) ? EWarriorConfirmType::Yes : EWarriorConfirmType::No;
+}
+
+/**
+ * 从Actor获取PawnCombatComponent组件
+ * 
+ * @param InActor - 要获取组件的目标Actor
+ * @return 返回找到的PawnCombatComponent指针，如果未找到则返回nullptr
+ * 
+ * 实现细节:
+ * 1. 首先检查传入的Actor是否有效
+ * 2. 尝试将Actor转换为IPawnCombatInterface接口
+ * 3. 如果转换成功，通过接口获取PawnCombatComponent
+ * 4. 如果转换失败或Actor未实现接口，返回nullptr
+ */
+UPawnCombatComponent* UWarriorBlueprintFunctionLibrary::NativeGetPawnCombatComponentFromActor(AActor* InActor)
+{
+	// 检查传入的Actor是否有效
+	check(InActor);
+
+	// 尝试将Actor转换为IPawnCombatInterface接口
+	if (const IPawnCombatInterface* PawnCombatInterface = Cast<IPawnCombatInterface>(InActor))
+	{
+		// 如果转换成功，通过接口获取PawnCombatComponent
+		return PawnCombatInterface->GetPawnCombatComponent();
+	}
+
+	// 如果转换失败或Actor未实现接口，返回nullptr
+	return nullptr;
+}
+
+/**
+ * 蓝图版本的从Actor获取PawnCombatComponent组件函数
+ * 
+ * @param InActor - 要获取组件的目标Actor
+ * @param OutValidType - 输出参数，表示获取结果是否有效(Valid/Invalid)
+ * @return 返回找到的PawnCombatComponent指针，如果未找到则返回nullptr
+ * 
+ * 该函数是NativeGetPawnCombatComponentFromActor的蓝图版本:
+ * 1. 调用原生获取函数获取组件
+ * 2. 根据获取结果设置有效性类型
+ * 3. 返回获取到的组件
+ */
+UPawnCombatComponent* UWarriorBlueprintFunctionLibrary::BP_GetPawnCombatComponentFromActor(AActor* InActor,
+	EWarriorValidType& OutValidType)
+{
+	//NativeGetPawnCombatComponentFromActor 我们自己写的 就在这个类里面
+	UPawnCombatComponent* CombatComponent = NativeGetPawnCombatComponentFromActor(InActor);
+	
+	// 根据组件获取结果设置有效性类型
+	OutValidType = CombatComponent ? EWarriorValidType::Valid : EWarriorValidType::Invalid;
+	
+	return CombatComponent;
 }

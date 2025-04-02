@@ -5,21 +5,13 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "WarriorTypes/WarriorEnumTypes.h"
 #include "WarriorBlueprintFunctionLibrary.generated.h"
 
+class UPawnCombatComponent;
 // 前向声明UWarriorAbilitySystemComponent类
 class UWarriorAbilitySystemComponent;
 
-/**
- * 确认类型枚举
- * 用于表示确认结果的两种状态
- */
-UENUM()
-enum class EWarriorConfirmType : uint8
-{
-	Yes, // 确认/是
-	No // 否定/否
-};
 
 /**
  * 战士蓝图函数库
@@ -94,4 +86,22 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Warrior|BlueprintFunctionLibrary",
 		meta=(DisplayName="Is Actor Has Tag", ExpandEnumAsExecs="OutConfirmType"))
 	static void BP_IsActorHasTag(AActor* InActor, FGameplayTag TagToCheck, EWarriorConfirmType& OutConfirmType);
+
+
+	/**
+	 * 从Actor获取PawnCombatComponent组件
+	 * 
+	 * @param InActor - 要获取组件的目标Actor
+	 * @return 返回找到的PawnCombatComponent指针，如果未找到则返回nullptr
+	 * 
+	 * 该函数会检查Actor是否实现了IPawnCombatInterface接口
+	 * 如果实现了接口，则通过接口获取PawnCombatComponent
+	 * 这是一个原生C++实现的辅助函数
+	 */
+	static UPawnCombatComponent* NativeGetPawnCombatComponentFromActor(AActor* InActor);
+
+
+	UFUNCTION(BlueprintCallable, Category = "Warrior|BlueprintFunctionLibrary",
+		meta=(DisplayName="Get Pawn Combat Component From Actor", ExpandEnumAsExecs="OutValidType"))
+	static UPawnCombatComponent* BP_GetPawnCombatComponentFromActor(AActor* InActor, EWarriorValidType& OutValidType);
 };
