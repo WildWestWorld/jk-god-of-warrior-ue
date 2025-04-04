@@ -101,8 +101,7 @@ void AWarriorEnemyCharacter::InitEnemyStartUpData()
 			{
 				// 将加载的数据应用到角色的能力系统组件
 				LoadedData->GiveToAbilitySystemComponent(WarriorAbilitySystemComponent);
-				// 打印调试信息表示数据加载成功
-				Debug::Print(TEXT("Enemy Start Up Data Loaded"), FColor::Green);
+
 			}
 		})
 	);

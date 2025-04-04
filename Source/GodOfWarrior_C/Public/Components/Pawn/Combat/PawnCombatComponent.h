@@ -9,6 +9,12 @@
 
 class AWarriorWeaponBase;
 
+UENUM(BlueprintType)
+enum class EToggleDamageType:uint8
+{
+	CurrentEquippedWeapon, LeftHand, RightHand
+};
+
 /**
 * UPawnCombatComponent 用于管理角色的战斗系统
 * 主要功能包括:
@@ -30,7 +36,7 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Warrior|Combat")
 	void RegisterSpawnedWeapon(FGameplayTag InWeaponTagToRegister, AWarriorWeaponBase* InWeaponToRegister,
-							   bool bRegisterAsEquippedWeapon = false);
+	                           bool bRegisterAsEquippedWeapon = false);
 
 	/**
 	 * 通过GameplayTag获取角色携带的武器
@@ -50,6 +56,18 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Warrior|Combat")
 	AWarriorWeaponBase* GetCharacterCurrentEquippedWeapon() const;
+
+	/**
+	 * 切换武器的碰撞检测状态
+	 * @param bShouldEnable - 是否启用碰撞检测
+	 * @param ToggleDamageType - 指定要切换碰撞的武器类型:
+	 *                          - CurrentEquippedWeapon: 当前装备的武器
+	 *                          - LeftHand: 左手武器
+	 *                          - RightHand: 右手武器
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Warrior|Combat")
+	void ToggleWeaponCollision(bool bShouldEnable,
+	                           EToggleDamageType ToggleDamageType = EToggleDamageType::CurrentEquippedWeapon);
 
 private:
 	/** 存储角色携带的所有武器，key为武器的GameplayTag，value为武器实例指针 */
