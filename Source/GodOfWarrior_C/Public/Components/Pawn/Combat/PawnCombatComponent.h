@@ -10,18 +10,20 @@
 class AWarriorWeaponBase;
 
 UENUM(BlueprintType)
-enum class EToggleDamageType:uint8
+enum class EToggleDamageType : uint8
 {
-	CurrentEquippedWeapon, LeftHand, RightHand
+	CurrentEquippedWeapon,
+	LeftHand,
+	RightHand
 };
 
 /**
-* UPawnCombatComponent 用于管理角色的战斗系统
-* 主要功能包括:
-* - 管理角色携带的武器
-* - 处理武器的装备状态
-* - 提供武器查询接口
-*/
+ * UPawnCombatComponent 用于管理角色的战斗系统
+ * 主要功能包括:
+ * - 管理角色携带的武器
+ * - 处理武器的装备状态
+ * - 提供武器查询接口
+ */
 UCLASS()
 class GODOFWARRIOR_C_API UPawnCombatComponent : public UPawnExtensionComponentBase
 {
@@ -35,8 +37,8 @@ public:
 	 * @param bRegisterAsEquippedWeapon - 是否将该武器注册为当前装备的武器
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Warrior|Combat")
-	void RegisterSpawnedWeapon(FGameplayTag InWeaponTagToRegister, AWarriorWeaponBase* InWeaponToRegister,
-	                           bool bRegisterAsEquippedWeapon = false);
+	void RegisterSpawnedWeapon(FGameplayTag InWeaponTagToRegister, AWarriorWeaponBase *InWeaponToRegister,
+							   bool bRegisterAsEquippedWeapon = false);
 
 	/**
 	 * 通过GameplayTag获取角色携带的武器
@@ -44,7 +46,7 @@ public:
 	 * @return 返回找到的武器指针，如果未找到则返回nullptr
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Warrior|Combat")
-	AWarriorWeaponBase* GetCharacterCarriedWeaponByTag(FGameplayTag InWeaponTagToGet) const;
+	AWarriorWeaponBase *GetCharacterCarriedWeaponByTag(FGameplayTag InWeaponTagToGet) const;
 
 	/** 当前装备的武器的GameplayTag */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Warrior|Combat")
@@ -55,7 +57,7 @@ public:
 	 * @return 返回当前装备的武器指针，如果没有装备武器则返回nullptr
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Warrior|Combat")
-	AWarriorWeaponBase* GetCharacterCurrentEquippedWeapon() const;
+	AWarriorWeaponBase *GetCharacterCurrentEquippedWeapon() const;
 
 	/**
 	 * 切换武器的碰撞检测状态
@@ -67,21 +69,25 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Warrior|Combat")
 	void ToggleWeaponCollision(bool bShouldEnable,
-	                           EToggleDamageType ToggleDamageType = EToggleDamageType::CurrentEquippedWeapon);
+							   EToggleDamageType ToggleDamageType = EToggleDamageType::CurrentEquippedWeapon);
 
 	/**
 	 * 当武器击中目标角色时调用
 	 * @param HitActor - 被击中的目标角色
 	 */
-	virtual void OnHitTargetActor(AActor* HitActor);
+	virtual void OnHitTargetActor(AActor *HitActor);
 
 	/**
 	 * 当武器从目标角色身上拔出时调用
 	 * @param InteractedActor - 与武器交互的目标角色
 	 */
-	virtual void OnWeaponPulledFromTargetActor(AActor* InteractedActor);
+	virtual void OnWeaponPulledFromTargetActor(AActor *InteractedActor);
+
+protected:
+	/** 存储当前与武器碰撞的Actor列表 */
+	TArray<AActor *> OverlappedActors;
 
 private:
 	/** 存储角色携带的所有武器，key为武器的GameplayTag，value为武器实例指针 */
-	TMap<FGameplayTag, AWarriorWeaponBase*> CharacterCarriedWeaponMap;
+	TMap<FGameplayTag, AWarriorWeaponBase *> CharacterCarriedWeaponMap;
 };

@@ -2,6 +2,7 @@
 
 #include "Components/Pawn/Combat/PawnCombatComponent.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "Components/BoxComponent.h"
 #include "Debug/WarriorDebugHelper.h"
 #include "Items/Weapons/WarriorWeaponBase.h"
@@ -13,19 +14,19 @@
  * @param bRegisterAsEquippedWeapon - 是否将该武器注册为当前装备的武器
  */
 void UPawnCombatComponent::RegisterSpawnedWeapon(FGameplayTag InWeaponTagToRegister,
-                                                 AWarriorWeaponBase* InWeaponToRegister, bool bRegisterAsEquippedWeapon)
+												 AWarriorWeaponBase *InWeaponToRegister, bool bRegisterAsEquippedWeapon)
 {
 	// 检查该武器标签是否已经在映射表中存在
 	checkf(!CharacterCarriedWeaponMap.Contains(InWeaponTagToRegister),
-	       TEXT("A named %s has already been added as carried weapon"), *InWeaponTagToRegister.ToString());
+		   TEXT("A named %s has already been added as carried weapon"), *InWeaponTagToRegister.ToString());
 
 	// 检查武器标签是否有效
 	checkf(InWeaponTagToRegister.IsValid(),
-	       TEXT("Invalid weapon tag provided"));
+		   TEXT("Invalid weapon tag provided"));
 
 	// 检查武器指针是否有效
 	checkf(IsValid(InWeaponToRegister),
-	       TEXT("Invalid weapon pointer provided"));
+		   TEXT("Invalid weapon pointer provided"));
 
 	// CharacterCarriedWeaponMap 看起来是一个存储武器信息的映射
 	// Emplace 是一个函数，用于在映射中插入新的元素
@@ -45,7 +46,6 @@ void UPawnCombatComponent::RegisterSpawnedWeapon(FGameplayTag InWeaponTagToRegis
 	// 当武器从目标抽离时,会自动调用PawnCombatComponent的OnWeaponPulledFromTargetActor函数
 	InWeaponToRegister->OnWeaponPulledFromTarget.BindUObject(this, &ThisClass::OnWeaponPulledFromTargetActor);
 
-
 	// 如果需要将该武器设置为当前装备的武器
 	if (bRegisterAsEquippedWeapon)
 	{
@@ -58,13 +58,13 @@ void UPawnCombatComponent::RegisterSpawnedWeapon(FGameplayTag InWeaponTagToRegis
  * @param InWeaponTagToGet - 要获取的武器的GameplayTag
  * @return 返回找到的武器指针，如果未找到则返回nullptr
  */
-AWarriorWeaponBase* UPawnCombatComponent::GetCharacterCarriedWeaponByTag(FGameplayTag InWeaponTagToGet) const
+AWarriorWeaponBase *UPawnCombatComponent::GetCharacterCarriedWeaponByTag(FGameplayTag InWeaponTagToGet) const
 {
 	// 检查映射表中是否包含该武器标签
 	if (CharacterCarriedWeaponMap.Contains(InWeaponTagToGet))
 	{
 		// 尝试从映射表中找到对应的武器
-		if (AWarriorWeaponBase* const * FoundWeapon = CharacterCarriedWeaponMap.Find(InWeaponTagToGet))
+		if (AWarriorWeaponBase *const *FoundWeapon = CharacterCarriedWeaponMap.Find(InWeaponTagToGet))
 		{
 			return *FoundWeapon;
 		}
@@ -76,7 +76,7 @@ AWarriorWeaponBase* UPawnCombatComponent::GetCharacterCarriedWeaponByTag(FGamepl
  * 获取角色当前装备的武器
  * @return 返回当前装备的武器指针，如果没有装备武器则返回nullptr
  */
-AWarriorWeaponBase* UPawnCombatComponent::GetCharacterCurrentEquippedWeapon() const
+AWarriorWeaponBase *UPawnCombatComponent::GetCharacterCurrentEquippedWeapon() const
 {
 	// 检查当前装备的武器标签是否有效
 	if (!CurrentEquippedWeaponTag.IsValid())
@@ -98,7 +98,7 @@ void UPawnCombatComponent::ToggleWeaponCollision(bool bShouldEnable, EToggleDama
 	if (ToggleDamageType == EToggleDamageType::CurrentEquippedWeapon)
 	{
 		// 获取当前装备的武器
-		AWarriorWeaponBase* WeaponToToggle = GetCharacterCurrentEquippedWeapon();
+		AWarriorWeaponBase *WeaponToToggle = GetCharacterCurrentEquippedWeapon();
 		// 确保武器存在
 		check(WeaponToToggle);
 
@@ -111,18 +111,20 @@ void UPawnCombatComponent::ToggleWeaponCollision(bool bShouldEnable, EToggleDama
 		{
 			// 禁用武器的碰撞检测
 			WeaponToToggle->GetWeaponCollisionBox()->SetCollisionEnabled((ECollisionEnabled::NoCollision));
+
+			// 清空当前与武器碰撞的Actor列表
+			OverlappedActors.Empty();
 		}
 	}
 }
 
-void UPawnCombatComponent::OnHitTargetActor(AActor* HitActor)
+void UPawnCombatComponent::OnHitTargetActor(AActor *HitActor)
 {
-	Debug::Print(GetOwningPawn()->GetActorNameOrLabel() + TEXT("Hit") + HitActor->GetActorNameOrLabel(), FColor::Green);
+
+	
 }
 
-void UPawnCombatComponent::OnWeaponPulledFromTargetActor(AActor* InteractedActor)
+void UPawnCombatComponent::OnWeaponPulledFromTargetActor(AActor *InteractedActor)
 {
-	Debug::Print(
-		GetOwningPawn()->GetActorNameOrLabel() + TEXT("'s weapon pulled from") + InteractedActor->GetActorNameOrLabel(),
-		FColor::Red);
+
 }

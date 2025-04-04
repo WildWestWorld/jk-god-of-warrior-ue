@@ -27,4 +27,16 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Warrior|Combat")
 	AWarriorHeroWeapon* GetHeroCarriedWeaponByTag(FGameplayTag InWeaponTag) const;
+
+	/**
+	 * 当武器击中目标角色时调用
+	 * @param HitActor - 被击中的目标角色
+	 */
+	virtual void OnHitTargetActor(AActor* HitActor) override;
+
+	/**
+	 * 当武器从目标角色身上拔出时调用
+	 * @param InteractedActor - 与武器交互的目标角色
+	 */
+	virtual void OnWeaponPulledFromTargetActor(AActor* InteractedActor) override;
 };
