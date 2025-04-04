@@ -40,8 +40,29 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Warrior|Ability")
 	AWarriorHeroController* GetHeroControllerFromActorInfo();
 
+	/**
+	 * 从ActorInfo中获取英雄战斗组件实例
+	 * @return 返回英雄角色的战斗组件指针
+	 * BlueprintPure：表示这是一个纯函数，不修改任何状态，可以安全地从蓝图中调用
+	 */
 	UFUNCTION(BlueprintPure, Category = "Warrior|Ability")
 	UHeroCombatComponent* GetHeroCombatComponentFromActorInfo();
+
+	/**
+	 * 创建英雄伤害效果规范句柄
+	 * 用于构建伤害效果的规范,包含伤害计算所需的各项参数
+	 * @param EffectClass - 要应用的GameplayEffect效果类
+	 * @param InWeaponBaseDamage - 武器的基础伤害值
+	 * @param InCurrentAttackTypeTag - 当前攻击类型的GameplayTag
+	 * @param InCurrentComboCount - 当前连击数
+	 * @return 返回配置好的GameplayEffect规范句柄
+	 * BlueprintPure：表示这是一个纯函数，不修改任何状态，可以安全地从蓝图中调用
+	 */
+	UFUNCTION(BlueprintPure, Category = "Warrior|Ability")
+	FGameplayEffectSpecHandle MakeHeroDamageEffectSpecHandle(TSubclassOf<UGameplayEffect> EffectClass,
+	                                                         float InWeaponBaseDamage,
+	                                                         FGameplayTag InCurrentAttackTypeTag,
+	                                                         int32 InCurrentComboCount);
 
 private:
 	/**
@@ -57,5 +78,4 @@ private:
 	 * 通过GetHeroControllerFromActorInfo()方法访问和更新
 	 */
 	TWeakObjectPtr<AWarriorHeroController> CachedWarriorHeroController;
-
 };
