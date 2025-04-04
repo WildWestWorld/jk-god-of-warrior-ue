@@ -69,6 +69,18 @@ public:
 	void ToggleWeaponCollision(bool bShouldEnable,
 	                           EToggleDamageType ToggleDamageType = EToggleDamageType::CurrentEquippedWeapon);
 
+	/**
+	 * 当武器击中目标角色时调用
+	 * @param HitActor - 被击中的目标角色
+	 */
+	virtual void OnHitTargetActor(AActor* HitActor);
+
+	/**
+	 * 当武器从目标角色身上拔出时调用
+	 * @param InteractedActor - 与武器交互的目标角色
+	 */
+	virtual void OnWeaponPulledFromTargetActor(AActor* InteractedActor);
+
 private:
 	/** 存储角色携带的所有武器，key为武器的GameplayTag，value为武器实例指针 */
 	TMap<FGameplayTag, AWarriorWeaponBase*> CharacterCarriedWeaponMap;

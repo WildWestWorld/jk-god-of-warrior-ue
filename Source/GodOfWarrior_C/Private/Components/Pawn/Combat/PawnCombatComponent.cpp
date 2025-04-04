@@ -35,6 +35,17 @@ void UPawnCombatComponent::RegisterSpawnedWeapon(FGameplayTag InWeaponTagToRegis
 	// 将武器添加到映射表中
 	CharacterCarriedWeaponMap.Emplace(InWeaponTagToRegister, InWeaponToRegister);
 
+	// 绑定武器击中目标时的回调函数
+	// 将当前组件的OnHitTargetActor函数绑定到武器的OnWeaponHitTarget委托
+	// 当武器击中目标时,会自动调用PawnCombatComponent的OnHitTargetActor函数
+	InWeaponToRegister->OnWeaponHitTarget.BindUObject(this, &ThisClass::OnHitTargetActor);
+
+	// 绑定武器从目标抽离时的回调函数
+	// 将当前组件的OnWeaponPulledFromTargetActor函数绑定到武器的OnWeaponPulledFromTarget委托
+	// 当武器从目标抽离时,会自动调用PawnCombatComponent的OnWeaponPulledFromTargetActor函数
+	InWeaponToRegister->OnWeaponPulledFromTarget.BindUObject(this, &ThisClass::OnWeaponPulledFromTargetActor);
+
+
 	// 如果需要将该武器设置为当前装备的武器
 	if (bRegisterAsEquippedWeapon)
 	{
@@ -102,5 +113,16 @@ void UPawnCombatComponent::ToggleWeaponCollision(bool bShouldEnable, EToggleDama
 			WeaponToToggle->GetWeaponCollisionBox()->SetCollisionEnabled((ECollisionEnabled::NoCollision));
 		}
 	}
-	//TODO:加个碰撞体积盒子
+}
+
+void UPawnCombatComponent::OnHitTargetActor(AActor* HitActor)
+{
+	Debug::Print(GetOwningPawn()->GetActorNameOrLabel() + TEXT("Hit") + HitActor->GetActorNameOrLabel(), FColor::Green);
+}
+
+void UPawnCombatComponent::OnWeaponPulledFromTargetActor(AActor* InteractedActor)
+{
+	Debug::Print(
+		GetOwningPawn()->GetActorNameOrLabel() + TEXT("'s weapon pulled from") + InteractedActor->GetActorNameOrLabel(),
+		FColor::Red);
 }
