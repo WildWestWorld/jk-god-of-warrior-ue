@@ -4,7 +4,6 @@
 
 #include "Characters/WarriorHeroCharacter.h"
 #include "Controllers/WarriorHeroController.h"
-#include "WarriorHeroGameplayAbility.h"
 
 #include "AbilitySystem/WarriorAbilitySystemComponent.h"
 #include "GameplayTags/WarriorGameplayTags.h"
@@ -68,38 +67,57 @@ UHeroCombatComponent* UWarriorHeroGameplayAbility::GetHeroCombatComponentFromAct
  * @param EffectClass - 要应用的GameplayEffect效果类
  * @param InWeaponBaseDamage - 武器的基础伤害值
  * @param InCurrentAttackTypeTag - 当前攻击类型的GameplayTag
- * @param InCurrentComboCount - 当前连击数
+ * @param InDisplayComboCount - 当前连击数
  * @return 返回配置好的GameplayEffect规范句柄
  */
 FGameplayEffectSpecHandle UWarriorHeroGameplayAbility::MakeHeroDamageEffectSpecHandle(
 	TSubclassOf<UGameplayEffect> EffectClass, float InWeaponBaseDamage, FGameplayTag InCurrentAttackTypeTag,
-	int32 InCurrentComboCount)
+	int32 InDisplayComboCount)
 {
 	// 确保传入的效果类有效
 	check(EffectClass);
 
-	// 创建效果上下文句柄
-	FGameplayEffectContextHandle ContextHandle = GetWarriorAbilitySystemComponentFromActorInfo()->MakeOutgoingSpec();
-	// 设置能力
-	ContextHandle.SetAbility(this);
-	// 添加源对象(造成伤害的对象)
-	ContextHandle.AddSourceObject(GetAvatarActorFromActorInfo());
-	// 添加发起者和目标
-	ContextHandle.AddInstigator(GetAvatarActorFromActorInfo(), GetAvatarActorFromActorInfo());
-
-	// 创建效果规范句柄
-	FGameplayEffectSpecHandle EffectSpecHandle = GetWarriorAbilitySystemComponentFromActorInfo()->MakeOutgoingSpec(
-		EffectClass, GetAbilityLevel(), ContextHandle);
-
-	// 设置基础伤害值
-	EffectSpecHandle.Data->SetSetByCallerMagnitude(WarriorGameplayTags::Shared_SetByCaller_BaseDamage,
-	                                               InWeaponBaseDamage);
-	
-	// 如果攻击类型标签有效,设置连击数
-	if (InCurrentAttackTypeTag.IsValid())
+	// 获取技能系统组件
+	UAbilitySystemComponent* AbilitySystemComponent = GetWarriorAbilitySystemComponentFromActorInfo();
+	if (!AbilitySystemComponent)
 	{
-		EffectSpecHandle.Data->SetSetByCallerMagnitude(InCurrentAttackTypeTag, InCurrentComboCount);
+		return FGameplayEffectSpecHandle();
 	}
 
+	// 获取拥有该技能的角色
+	AActor* AvatarActor = GetAvatarActorFromActorInfo();
+	if (!AvatarActor)
+	{
+		return FGameplayEffectSpecHandle();
+	}
+
+	// 创建效果上下文并设置相关参数
+	// - 设置当前技能为效果来源
+	// - 设置角色为源对象和发起者
+	FGameplayEffectContextHandle ContextHandle = AbilitySystemComponent->MakeEffectContext();
+	ContextHandle.SetAbility(this);
+	ContextHandle.AddSourceObject(AvatarActor);
+	ContextHandle.AddInstigator(AvatarActor, AvatarActor);
+
+	// 使用技能系统组件创建外发效果规范
+	FGameplayEffectSpecHandle EffectSpecHandle = AbilitySystemComponent->MakeOutgoingSpec(
+		EffectClass, GetAbilityLevel(), ContextHandle);
+
+	// 检查效果规范是否创建成功
+	if (!EffectSpecHandle.IsValid())
+	{
+		return FGameplayEffectSpecHandle();
+	}
+
+	// 设置效果的基础伤害值
+	EffectSpecHandle.Data->SetSetByCallerMagnitude(WarriorGameplayTags::Shared_SetByCaller_BaseDamage, InWeaponBaseDamage);
+	
+	// 如果攻击类型标签有效,设置当前连击数
+	if (InCurrentAttackTypeTag.IsValid())
+	{
+		EffectSpecHandle.Data->SetSetByCallerMagnitude(InCurrentAttackTypeTag, InDisplayComboCount);
+	}
+
+	// 返回配置好的效果规范句柄
 	return EffectSpecHandle;
 }

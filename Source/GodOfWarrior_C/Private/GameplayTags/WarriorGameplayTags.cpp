@@ -37,6 +37,10 @@ namespace WarriorGameplayTags
 	//Status Tags
 	UE_DEFINE_GAMEPLAY_TAG(Player_Status_Attack_JumpToFinish, "Player.Status.Attack.JumpToFinish")
 
+	//SetByCaller回调函数
+	UE_DEFINE_GAMEPLAY_TAG(Player_SetByCaller_AttackType_Light, "Player.SetByCaller.AttackType.Light")
+	UE_DEFINE_GAMEPLAY_TAG(Player_SetByCaller_AttackType_Heavy, "Player.SetByCaller.AttackType.Heavy")
+
 	//Enemy Tags
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Weapon, "Enemy.Weapon")
 

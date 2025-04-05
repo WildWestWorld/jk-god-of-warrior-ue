@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Abilities/GameplayAbility.h"
+#include "WarriorTypes/WarriorEnumTypes.h"
 #include "WarriorGameplayAbility.generated.h"
 
 class UWarriorAbilitySystemComponent;
@@ -75,9 +76,44 @@ protected:
 	 * @return 返回拥有该能力的Actor的战斗组件指针
 	 * BlueprintPure: 表示这是一个纯函数,不会修改任何状态,可以在蓝图中安全调用
 	 */
-	UFUNCTION(BlueprintPure, Category="Warrior|Ability") 
+	UFUNCTION(BlueprintPure, Category="Warrior|Ability")
 	UPawnCombatComponent* GetPawnCombatComponentFromActorInfo() const;
 
+	/**
+	 * 从ActorInfo中获取WarriorAbilitySystemComponent组件
+	 * @return 返回拥有该能力的Actor的技能系统组件指针
+	 * BlueprintPure: 表示这是一个纯函数,不会修改任何状态,可以在蓝图中安全调用
+	 */
 	UFUNCTION(BlueprintPure, Category="Warrior|Ability")
 	UWarriorAbilitySystemComponent* GetWarriorAbilitySystemComponentFromActorInfo() const;
+
+	/**
+	 * 将效果规范应用到目标Actor上
+	 * 这是一个本地函数,用于将GameplayEffect效果应用到指定目标
+	 * 
+	 * @param TargetActor - 要应用效果的目标Actor
+	 * @param InSpecHandle - 包含效果具体配置的规范句柄
+	 * @return 返回激活的GameplayEffect句柄,可用于后续追踪或移除该效果
+	 */
+	FActiveGameplayEffectHandle NativeApplyEffectSpecHandleToTarget(AActor* TargetActor,
+	                                                                const FGameplayEffectSpecHandle& InSpecHandle);
+
+	/**
+	 * 蓝图版本的效果规范应用函数
+	 * 将GameplayEffect效果应用到指定目标,并通过枚举返回应用结果
+	 * 
+	 * @param TargetActor - 要应用效果的目标Actor
+	 * @param InSpecHandle - 包含效果具体配置的规范句柄
+	 * @param OutSuccessType - 输出参数,表示效果应用是否成功的枚举值
+	 * @return 返回激活的GameplayEffect句柄
+	 * 
+	 * BlueprintPure: 表示这是一个纯函数
+	 * DisplayName: 在蓝图中显示的函数名称
+	 * ExpandEnumAsExecs: 将OutSuccessType枚举展开为蓝图执行引脚
+	 */
+	UFUNCTION(BlueprintCallable, Category="Warrior|Ability",
+		meta=(DisplayName="Apply Gameplay Effect Spec Handle To Target Actor", ExpandEnumAsExecs="OutSuccessType"))
+	FActiveGameplayEffectHandle BP_NativeApplyEffectSpecHandleToTarget(AActor* TargetActor,
+	                                                                   const FGameplayEffectSpecHandle& InSpecHandle,
+	                                                                   EWarriorSuccessType& OutSuccessType);
 };

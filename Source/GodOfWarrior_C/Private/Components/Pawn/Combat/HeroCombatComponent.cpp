@@ -24,6 +24,30 @@ AWarriorHeroWeapon* UHeroCombatComponent::GetHeroCarriedWeaponByTag(FGameplayTag
 }
 
 /**
+ * 获取英雄当前装备的武器
+ * 该函数调用父类的GetCharacterCurrentEquippedWeapon方法获取基础武器，
+ * 然后将其转换为英雄专用武器类型AWarriorHeroWeapon
+ * 
+ * @return 返回转换后的英雄武器指针，如果转换失败则返回nullptr
+ */
+AWarriorHeroWeapon* UHeroCombatComponent::GetHeroCurrentEquippedWeapon() const
+{
+	return Cast<AWarriorHeroWeapon>(GetCharacterCurrentEquippedWeapon());
+}
+
+/**
+ * 获取英雄当前装备武器在指定等级下的伤害值
+ * 通过访问武器数据中的基础伤害曲线，获取特定等级下的伤害值
+ * 
+ * @param InLevel - 要查询的等级
+ * @return 返回武器在指定等级下的伤害值
+ */
+float UHeroCombatComponent::GetHeroCurrentEquippedWeaponDamageAtLevel(float InLevel) const
+{
+	return GetHeroCurrentEquippedWeapon()->HeroWeaponData.WeaponBaseDamage.GetValueAtLevel(InLevel);
+}
+
+/**
  * 当武器击中目标角色时调用的函数
  * 用于处理武器击中效果和发送相关游戏事件
  * 

@@ -2,6 +2,7 @@
 
 #pragma once
 #include "GameplayTagContainer.h"
+#include "ScalableFloat.h"
 // USTRUCT 结构体必须包含生成的头文件才能编译
 #include "WarriorStructTypes.generated.h"
 
@@ -52,12 +53,16 @@ struct FWarriorHeroWeaponData
 	 */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UWarriorHeroLinkedAnimLayer> WeaponAnimLayerToLink;
-	
+
 	// 武器控制的输入映射上下文
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UInputMappingContext* WeaponInputMappingContext;
-	
+
 	// 装备此武器时授予的默认技能数组
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(TitleProperty="InputTag"))
 	TArray<FWarriorHeroAbilitySet> DefaultWeaponAbilities;
+
+	//默认武器的伤害
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FScalableFloat WeaponBaseDamage;
 };

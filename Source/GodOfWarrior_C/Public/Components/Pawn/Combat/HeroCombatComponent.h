@@ -28,6 +28,22 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Warrior|Combat")
 	AWarriorHeroWeapon* GetHeroCarriedWeaponByTag(FGameplayTag InWeaponTag) const;
 
+
+	/**
+	 * 获取英雄当前装备的武器
+	 * @return 返回当前装备的英雄武器指针，如果未装备武器则返回nullptr
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Warrior|Combat")
+	AWarriorHeroWeapon* GetHeroCurrentEquippedWeapon() const;
+
+	/**
+	 * 获取英雄当前装备武器在指定等级下的伤害值
+	 * @param InLevel - 要查询的等级
+	 * @return 返回武器在指定等级下的伤害值
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Warrior|Combat")
+	float GetHeroCurrentEquippedWeaponDamageAtLevel(float InLevel) const;
+
 	/**
 	 * 当武器击中目标角色时调用
 	 * @param HitActor - 被击中的目标角色

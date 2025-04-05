@@ -44,6 +44,11 @@ namespace WarriorGameplayTags
 	//Status Tags
 	GODOFWARRIOR_C_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Status_Attack_JumpToFinish);
 
+	//SetByCaller回调函数
+	GODOFWARRIOR_C_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_SetByCaller_AttackType_Light);
+	GODOFWARRIOR_C_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_SetByCaller_AttackType_Heavy);
+
+
 	//Enemy Tags
 	GODOFWARRIOR_C_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Weapon);
 

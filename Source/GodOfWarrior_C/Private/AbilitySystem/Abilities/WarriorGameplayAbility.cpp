@@ -3,6 +3,7 @@
 // 包含必要的头文件
 #include "AbilitySystem/Abilities/WarriorGameplayAbility.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/WarriorAbilitySystemComponent.h"
 #include "Components/Pawn/Combat/PawnCombatComponent.h"
@@ -75,6 +76,7 @@ UPawnCombatComponent* UWarriorGameplayAbility::GetPawnCombatComponentFromActorIn
 	return GetAvatarActorFromActorInfo()->FindComponentByClass<UPawnCombatComponent>();
 }
 
+
 /**
  * 从ActorInfo中获取WarriorAbilitySystemComponent组件
  * @return 返回拥有该能力的Actor的能力系统组件指针
@@ -83,4 +85,24 @@ UWarriorAbilitySystemComponent* UWarriorGameplayAbility::GetWarriorAbilitySystem
 {
 	// 将当前Actor的能力系统组件转换为WarriorAbilitySystemComponent类型并返回
 	return Cast<UWarriorAbilitySystemComponent>(CurrentActorInfo->AbilitySystemComponent);
+}
+
+FActiveGameplayEffectHandle UWarriorGameplayAbility::NativeApplyEffectSpecHandleToTarget(AActor* TargetActor,
+	const FGameplayEffectSpecHandle& InSpecHandle)
+{
+	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
+	check(TargetASC&&InSpecHandle.IsValid());
+	return GetWarriorAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToTarget(
+		*InSpecHandle.Data, TargetASC);
+}
+
+FActiveGameplayEffectHandle UWarriorGameplayAbility::BP_NativeApplyEffectSpecHandleToTarget(AActor* TargetActor,
+	const FGameplayEffectSpecHandle& InSpecHandle, EWarriorSuccessType& OutSuccessType)
+{
+	FActiveGameplayEffectHandle ActiveGameplayEffectHandle = NativeApplyEffectSpecHandleToTarget(
+		TargetActor, InSpecHandle);
+	OutSuccessType = ActiveGameplayEffectHandle.WasSuccessfullyApplied()
+		                 ? EWarriorSuccessType::Successful
+		                 : EWarriorSuccessType::Failed;
+	return ActiveGameplayEffectHandle;
 }
