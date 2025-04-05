@@ -17,7 +17,7 @@
  * 生成以下访问器:
  * - 属性getter
  * - 值getter 
- * - 值setter
+ * - 值setter	
  * - 值初始化器
  */
 #define ATTRIBUTE_ACCESSORS(ClassName, PropertyName) \
@@ -68,4 +68,10 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category="Damage")
 	FGameplayAttributeData DefencePower;
 	ATTRIBUTE_ACCESSORS(UWarriorAttributeSet, DefencePower)
+
+
+	/** 伤害 */
+	UPROPERTY(BlueprintReadOnly, Category="Damage")
+	FGameplayAttributeData DamageTaken;
+	ATTRIBUTE_ACCESSORS(UWarriorAttributeSet, DamageTaken)
 };

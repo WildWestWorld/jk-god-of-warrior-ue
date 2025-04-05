@@ -26,4 +26,16 @@ namespace Debug
 			UE_LOG(LogTemp, Warning, TEXT("%s"), *Msg);
 		}
 	}
+
+
+	void Print(const FString& FloatTitle, float FloatValueToPrint, int32 InKey,
+	           const FColor& Color)
+	{
+		if (GEngine)
+		{
+			const FString FinalMsg = FloatTitle + FString::SanitizeFloat(FloatValueToPrint);
+			GEngine->AddOnScreenDebugMessage(InKey, 7.f, Color, FinalMsg);
+			UE_LOG(LogTemp, Warning, TEXT("%s"), *FinalMsg);
+		}
+	}
 }

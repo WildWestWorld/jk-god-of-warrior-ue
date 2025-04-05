@@ -10,4 +10,6 @@ namespace Debug
 	 * @param InKey A unique key for identifying the message (optional).
 	 */
 	void Print(const FString& Msg, const FColor& Color = FColor::MakeRandomColor(), int32 InKey = -1);
+	void Print(const FString& FloatTitle, float FloatValueToPrint, int32 InKey = -1,
+	           const FColor& Color = FColor::MakeRandomColor());
 }
