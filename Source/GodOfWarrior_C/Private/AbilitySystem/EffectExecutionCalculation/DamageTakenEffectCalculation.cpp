@@ -102,68 +102,84 @@ UDamageTakenEffectCalculation::UDamageTakenEffectCalculation()
 
 	RelevantAttributesToCapture.Add(GetWarriorDamageCapture().DamageTakenDef);
 }
-
+/**
+ * 执行伤害计算的核心函数
+ * 计算最终伤害值并将其应用到目标上
+ * 
+ * @param ExecutionParams - 包含执行计算所需的参数,如效果规格、标签等
+ * @param OutExecutionOutput - 输出参数,用于存储计算结果
+ */
 void UDamageTakenEffectCalculation::Execute_Implementation(
 	const FGameplayEffectCustomExecutionParameters& ExecutionParams,
 	FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
 {
+	// 调用父类实现
 	Super::Execute_Implementation(ExecutionParams, OutExecutionOutput);
 
+	// 获取效果规格
 	const FGameplayEffectSpec& EffectSpec = ExecutionParams.GetOwningSpec();
 
+	// 设置评估参数,包含源和目标的标签
 	FAggregatorEvaluateParameters EvaluateParams;
 	EvaluateParams.SourceTags = EffectSpec.CapturedSourceTags.GetAggregatedTags();
 	EvaluateParams.TargetTags = EffectSpec.CapturedTargetTags.GetAggregatedTags();
 
+	// 获取攻击者的攻击力
 	float SourceAttackPower = 0.f;
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(GetWarriorDamageCapture().AttackPowerDef, EvaluateParams,
 	                                                           SourceAttackPower);
 
-	Debug::Print(TEXT("SourceAttackPower"), SourceAttackPower);
-
+	// 初始化基础伤害和连击计数
 	float BaseDamage = 0.f;
 	int32 UsedLightAttackComboCount = 0;
 	int32 UsedHeavyAttackComboCount = 0;
 
+	// 从效果规格中获取SetByCaller标签对应的数值
 	for (const TPair<FGameplayTag, float>& TagMagnitude : EffectSpec.SetByCallerTagMagnitudes)
 	{
+		// 获取基础伤害值
 		if (TagMagnitude.Key.MatchesTagExact(WarriorGameplayTags::Shared_SetByCaller_BaseDamage))
 		{
 			BaseDamage = TagMagnitude.Value;
-			Debug::Print(TEXT("BaseDamage"), BaseDamage);
 		}
+		// 获取轻攻击连击次数
 		if (TagMagnitude.Key.MatchesTagExact(WarriorGameplayTags::Player_SetByCaller_AttackType_Light))
 		{
 			UsedLightAttackComboCount = TagMagnitude.Value;
-			Debug::Print(TEXT("UsedLightAttackComboCount"), UsedLightAttackComboCount);
 		}
+		// 获取重攻击连击次数
 		if (TagMagnitude.Key.MatchesTagExact(WarriorGameplayTags::Player_SetByCaller_AttackType_Heavy))
 		{
 			UsedHeavyAttackComboCount = TagMagnitude.Value;
-			Debug::Print(TEXT("UsedHeavyAttackComboCount"), UsedHeavyAttackComboCount);
 		}
 	}
 
-
+	// 获取目标的防御力
 	float TargetDefencePower = 0.f;
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(GetWarriorDamageCapture().DefencePowerDef,
 	                                                           EvaluateParams, TargetDefencePower);
-	Debug::Print(TEXT("TargetDefencePower"), TargetDefencePower);
+
+	// 计算轻攻击连击加成
 	if (UsedLightAttackComboCount != 0)
 	{
+		// 每次轻攻击连击增加5%伤害
 		const float DamageIncreasePercentLight = (UsedLightAttackComboCount - 1) * 0.05 + 1.f;
 		BaseDamage *= DamageIncreasePercentLight;
-		Debug::Print(TEXT("ScaleBaseDamageLight"), BaseDamage);
 	}
+
+	// 计算重攻击连击加成
 	if (UsedHeavyAttackComboCount != 0)
 	{
+		// 每次重攻击连击增加15%伤害
 		const float DamageIncreasePercentHeavy = UsedHeavyAttackComboCount * 0.15f + 1.f;
 		BaseDamage *= DamageIncreasePercentHeavy;
-		Debug::Print(TEXT("ScaleBaseDamageHeavy"), BaseDamage);
 	}
-	const float FinalDamageDone = BaseDamage * SourceAttackPower / TargetDefencePower;
 
+	// 计算最终伤害 = 基础伤害 * 攻击力 / 防御力
+	const float FinalDamageDone = BaseDamage * SourceAttackPower / TargetDefencePower;
 	Debug::Print(TEXT("FinalDamageDone"), FinalDamageDone);
+
+	// 如果最终伤害大于0,则应用到目标上
 	if (FinalDamageDone > 0.f)
 	{
 		OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(

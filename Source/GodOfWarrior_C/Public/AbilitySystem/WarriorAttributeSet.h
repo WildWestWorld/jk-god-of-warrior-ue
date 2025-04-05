@@ -39,6 +39,9 @@ public:
 	/** 构造函数,初始化属性默认值 */
 	UWarriorAttributeSet();
 
+	//来自于父级 AttributeSet
+	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
+
 	/** 当前生命值 */
 	UPROPERTY(BlueprintReadOnly, Category="Health")
 	FGameplayAttributeData CurrentHealth;
