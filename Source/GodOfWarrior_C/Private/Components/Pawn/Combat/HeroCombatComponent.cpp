@@ -75,11 +75,18 @@ void UHeroCombatComponent::OnHitTargetActor(AActor* HitActor)
 	// 这将触发相关的游戏效果(如伤害计算、特效播放等)
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetOwningPawn(),
 	                                                         WarriorGameplayTags::Shared_Event_MeleeHit, EventData);
+
+
+	// 向拥有者发送击中暂停事件
+	// 这将触发游戏暂停效果,增强打击感
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetOwningPawn(),
+	                                                         WarriorGameplayTags::Player_Event_HitPause,
+	                                                         FGameplayEventData());
 }
 
 void UHeroCombatComponent::OnWeaponPulledFromTargetActor(AActor* InteractedActor)
 {
-	Debug::Print(
-		GetOwningPawn()->GetActorNameOrLabel() + TEXT("'s weapon pulled from") + InteractedActor->GetActorNameOrLabel(),
-		FColor::Red);
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetOwningPawn(),
+	                                                         WarriorGameplayTags::Player_Event_HitPause,
+	                                                         FGameplayEventData());
 }

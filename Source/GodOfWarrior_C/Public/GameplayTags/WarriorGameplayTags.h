@@ -35,11 +35,15 @@ namespace WarriorGameplayTags
 	GODOFWARRIOR_C_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Attack_Light_Axe);
 	GODOFWARRIOR_C_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Attack_Heavy_Axe);
 
+	//Hit
+	GODOFWARRIOR_C_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Attack_HitPause);
+
 
 	// Player Tags
 	GODOFWARRIOR_C_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Weapon_Axe)
 	GODOFWARRIOR_C_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Event_Equip_Axe);
 	GODOFWARRIOR_C_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Event_UnEquip_Axe);
+	GODOFWARRIOR_C_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Event_HitPause);
 
 	//Status Tags
 	GODOFWARRIOR_C_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Status_Attack_JumpToFinish);
@@ -58,6 +62,8 @@ namespace WarriorGameplayTags
 
 	//Shared Ability
 	GODOFWARRIOR_C_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Ability_HitReact);
+	GODOFWARRIOR_C_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Ability_Death);
+
 
 	//Shared Event Tags
 	GODOFWARRIOR_C_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Event_MeleeHit);
@@ -65,4 +71,7 @@ namespace WarriorGameplayTags
 
 	//Shared SetByCaller
 	GODOFWARRIOR_C_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_SetByCaller_BaseDamage);
+
+	//Shared Status
+	GODOFWARRIOR_C_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Status_Dead);
 }

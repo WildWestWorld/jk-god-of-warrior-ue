@@ -177,7 +177,6 @@ void UDamageTakenEffectCalculation::Execute_Implementation(
 
 	// 计算最终伤害 = 基础伤害 * 攻击力 / 防御力
 	const float FinalDamageDone = BaseDamage * SourceAttackPower / TargetDefencePower;
-	Debug::Print(TEXT("FinalDamageDone"), FinalDamageDone);
 
 	// 如果最终伤害大于0,则应用到目标上
 	if (FinalDamageDone > 0.f)
