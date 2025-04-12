@@ -6,6 +6,7 @@
 #include "Characters/WarriorBaseCharacter.h"
 #include "WarriorEnemyCharacter.generated.h"
 
+class UEnemyUIComponent;
 class UEnemyCombatComponent;
 /**
  * 敌人角色类
@@ -28,6 +29,9 @@ public:
 	//来自于BaseCharacter/IPawnCombatInterface
 	virtual UPawnCombatComponent* GetPawnCombatComponent() const override;
 
+	//来自于来自于BaseCharacter/IPawnUIInterface
+	virtual UPawnUIComponent* GetPawnUIComponent() const override;
+
 protected:
 	/**
 	 * 敌人战斗组件
@@ -37,6 +41,9 @@ protected:
 	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Combat")
 	UEnemyCombatComponent* EnemyCombatComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI")
+	UEnemyUIComponent* EnemyUIComponent;
 
 	/**
 	 * 当角色被控制器占有时调用

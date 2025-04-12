@@ -4,6 +4,7 @@
 #include "Characters/WarriorEnemyCharacter.h"
 
 #include "Components/Pawn/Combat/EnemyCombatComponent.h"
+#include "Components/Pawn/UI/Enemy/EnemyUIComponent.h"
 #include "DataAssets/StartUpData/DataAsset_StartUpDataBase.h"
 #include "Engine/AssetManager.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -51,11 +52,18 @@ AWarriorEnemyCharacter::AWarriorEnemyCharacter()
 	// 创建并初始化敌人战斗组件
 	// 该组件负责处理敌人的战斗相关功能,如攻击、受伤等
 	EnemyCombatComponent = CreateDefaultSubobject<UEnemyCombatComponent>("EnemyCombatComponent");
+
+	EnemyUIComponent = CreateDefaultSubobject<UEnemyUIComponent>("EnemyUIComponent");
 }
 
 UPawnCombatComponent* AWarriorEnemyCharacter::GetPawnCombatComponent() const
 {
-	return EnemyCombatComponent                             ;
+	return EnemyCombatComponent;
+}
+
+UPawnUIComponent* AWarriorEnemyCharacter::GetPawnUIComponent() const
+{
+	return EnemyUIComponent;
 }
 
 /**
@@ -101,7 +109,6 @@ void AWarriorEnemyCharacter::InitEnemyStartUpData()
 			{
 				// 将加载的数据应用到角色的能力系统组件
 				LoadedData->GiveToAbilitySystemComponent(WarriorAbilitySystemComponent);
-
 			}
 		})
 	);

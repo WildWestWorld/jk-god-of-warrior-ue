@@ -8,6 +8,8 @@
 #include "WarriorHeroCharacter.generated.h"
 
 
+class UHeroUIComponent;
+class UEnemyUIComponent;
 class UHeroCombatComponent;
 // class
 class USpringArmComponent;
@@ -30,6 +32,8 @@ public:
 
 	//来自于BaseCharacter/IPawnCombatInterface
 	virtual UPawnCombatComponent* GetPawnCombatComponent() const override;
+	//来自于来自于BaseCharacter/IPawnUIInterface
+	virtual UPawnUIComponent* GetPawnUIComponent() const override;
 
 protected:
 	// protected：这个访问修饰符表示 BeginPlay 函数只能在类内部以及派生类中访问，外部不能访问。
@@ -64,6 +68,9 @@ private:
 	//对抗组件 使我们自己定义的
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Combat", meta=(AllowPrivateAccess="true"))
 	UHeroCombatComponent* HeroCombatComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI", meta=(AllowPrivateAccess="true"))
+	UHeroUIComponent* HeroUIComponent;
 
 #pragma endregion Components
 

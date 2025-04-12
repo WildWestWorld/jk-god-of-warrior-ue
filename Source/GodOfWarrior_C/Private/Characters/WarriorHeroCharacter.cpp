@@ -11,6 +11,8 @@
 #include "AbilitySystem/WarriorAbilitySystemComponent.h"
 #include "Components/Input/WarriorEnhancedInputComponent.h"
 #include "Components/Pawn/Combat/HeroCombatComponent.h"
+#include "Components/Pawn/UI/PawnUIComponent.h"
+#include "Components/Pawn/UI/Player/HeroUIComponent.h"
 #include "DataAssets/Input/DataAsset_InputConfig.h"
 #include "DataAssets/StartUpData/DataAsset_StartUpDataBase.h"
 
@@ -62,11 +64,18 @@ AWarriorHeroCharacter::AWarriorHeroCharacter()
 
 	// 创建Combat组件
 	HeroCombatComponent = CreateDefaultSubobject<UHeroCombatComponent>(TEXT("HeroCombatComponent"));
+
+	HeroUIComponent = CreateDefaultSubobject<UHeroUIComponent>(TEXT("HeroUIComponent"));
 }
 
 UPawnCombatComponent* AWarriorHeroCharacter::GetPawnCombatComponent() const
 {
 	return HeroCombatComponent;
+}
+
+UPawnUIComponent* AWarriorHeroCharacter::GetPawnUIComponent() const
+{
+	return HeroUIComponent;
 }
 
 // 开始的生命周期
