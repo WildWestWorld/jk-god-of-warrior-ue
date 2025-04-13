@@ -34,6 +34,8 @@ public:
 	virtual UPawnCombatComponent* GetPawnCombatComponent() const override;
 	//来自于来自于BaseCharacter/IPawnUIInterface
 	virtual UPawnUIComponent* GetPawnUIComponent() const override;
+	//来自于来自于BaseCharacter/IPawnUIInterface
+	virtual UHeroUIComponent* GetHeroUIComponent() const override;
 
 protected:
 	// protected：这个访问修饰符表示 BeginPlay 函数只能在类内部以及派生类中访问，外部不能访问。

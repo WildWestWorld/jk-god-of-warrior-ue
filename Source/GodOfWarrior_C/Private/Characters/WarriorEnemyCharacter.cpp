@@ -66,6 +66,11 @@ UPawnUIComponent* AWarriorEnemyCharacter::GetPawnUIComponent() const
 	return EnemyUIComponent;
 }
 
+UEnemyUIComponent* AWarriorEnemyCharacter::GetEnemyUIComponent() const
+{
+	return EnemyUIComponent;
+}
+
 /**
  * 当角色被控制器占有时调用
  * 重写自父类的虚函数

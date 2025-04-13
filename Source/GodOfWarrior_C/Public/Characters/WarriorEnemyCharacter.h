@@ -31,6 +31,8 @@ public:
 
 	//来自于来自于BaseCharacter/IPawnUIInterface
 	virtual UPawnUIComponent* GetPawnUIComponent() const override;
+	//来自于来自于BaseCharacter/IPawnUIInterface
+	virtual UEnemyUIComponent* GetEnemyUIComponent() const override;
 
 protected:
 	/**

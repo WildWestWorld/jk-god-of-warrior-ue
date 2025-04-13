@@ -78,6 +78,11 @@ UPawnUIComponent* AWarriorHeroCharacter::GetPawnUIComponent() const
 	return HeroUIComponent;
 }
 
+UHeroUIComponent* AWarriorHeroCharacter::GetHeroUIComponent() const
+{
+	return HeroUIComponent;
+}
+
 // 开始的生命周期
 void AWarriorHeroCharacter::BeginPlay()
 {

@@ -26,6 +26,7 @@
 	GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
 	GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
+class IPawnUIInterface;
 /**
  * 角色属性集类,用于管理角色的各种属性数值
  * 包含生命值、怒气值、攻击力和防御力等基础属性
@@ -77,4 +78,11 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category="Damage")
 	FGameplayAttributeData DamageTaken;
 	ATTRIBUTE_ACCESSORS(UWarriorAttributeSet, DamageTaken)
+
+private:
+	/** 缓存的PawnUI接口指针 
+	 * 用于存储对实现了IPawnUIInterface的对象的弱引用
+	 * 主要用于更新UI显示,如生命值、怒气值等属性变化
+	 */
+	TWeakInterfacePtr<IPawnUIInterface> CachedPawnUIInterface;
 };
