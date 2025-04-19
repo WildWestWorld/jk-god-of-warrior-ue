@@ -6,6 +6,7 @@
 #include "Characters/WarriorBaseCharacter.h"
 #include "WarriorEnemyCharacter.generated.h"
 
+class UWidgetComponent;
 class UEnemyUIComponent;
 class UEnemyCombatComponent;
 /**
@@ -47,6 +48,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI")
 	UEnemyUIComponent* EnemyUIComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="UI")
+	UWidgetComponent* EnemyHealthWidgetComponent;
+
 	/**
 	 * 当角色被控制器占有时调用
 	 * 重写自父类的虚函数
@@ -55,6 +59,8 @@ protected:
 	 * @param NewController - 接管控制的新控制器实例
 	 */
 	virtual void PossessedBy(AController* NewController) override;
+
+	virtual void BeginPlay() override;
 
 private:
 	void InitEnemyStartUpData();
