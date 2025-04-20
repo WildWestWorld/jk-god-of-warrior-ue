@@ -36,7 +36,7 @@ public class GodOfWarrior_C : ModuleRules
 			"InputCore", // 输入系统
 			"EnhancedInput", // 增强输入系统
 			"GameplayTags", // 游戏标签系统
-			"GameplayTasks", "GameplayAbilities", //开启GAS得加入
+			"GameplayTasks", "GameplayAbilities", "AIModule", //开启GAS得加入
 		});
 
 
