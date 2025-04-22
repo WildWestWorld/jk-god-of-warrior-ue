@@ -64,7 +64,7 @@ AWarriorAIController::AWarriorAIController(const FObjectInitializer& ObjectIniti
 	EnemyPerceptionComponent->OnTargetPerceptionUpdated.AddUniqueDynamic(this, &ThisClass::OnEnemyPerceptionUpdated);
 
 	// 设置AI控制器的队伍ID
-	AAIController::SetGenericTeamId(FGenericTeamId());
+	AAIController::SetGenericTeamId(FGenericTeamId(1));
 }
 
 /**
@@ -83,13 +83,21 @@ AWarriorAIController::AWarriorAIController(const FObjectInitializer& ObjectIniti
  */
 ETeamAttitude::Type AWarriorAIController::GetTeamAttitudeTowards(const AActor& Other) const
 {
+	// 将输入的Actor转换为Pawn类型
 	const APawn* PawnToCheck = Cast<const APawn>(&Other);
+
+	// 获取目标Pawn的控制器并转换为TeamAgent接口
 	const IGenericTeamAgentInterface* OtherTeamAgent = Cast<const IGenericTeamAgentInterface>(
 		PawnToCheck->GetController());
-	if (OtherTeamAgent && OtherTeamAgent->GetGenericTeamId() != GetGenericTeamId())
+
+	// 如果目标有TeamAgent接口且队伍ID小于自身队伍ID
+	if (OtherTeamAgent && OtherTeamAgent->GetGenericTeamId() < GetGenericTeamId())
 	{
+		// 返回敌对态度
 		return ETeamAttitude::Hostile;
 	}
+
+	// 默认返回友好态度
 	return ETeamAttitude::Friendly;
 }
 
@@ -148,11 +156,18 @@ void AWarriorAIController::BeginPlay()
  */
 void AWarriorAIController::OnEnemyPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
-	if (Stimulus.WasSuccessfullySensed() && Actor)
-	{
-		if (UBlackboardComponent* BlackboardComponent = GetBlackboardComponent())
-		{
-			BlackboardComponent->SetValueAsObject(FName("TargetActor"), Actor);
-		}
-	}
+    // 获取黑板组件
+    if (UBlackboardComponent* BlackboardComponent = GetBlackboardComponent())
+    {
+        // 检查黑板中是否已有目标Actor
+        if (!BlackboardComponent->GetValueAsObject(FName("TargetActor")))
+        {
+            // 如果感知成功且目标Actor有效
+            if (Stimulus.WasSuccessfullySensed() && Actor)
+            {
+                // 将感知到的Actor设置为目标
+                BlackboardComponent->SetValueAsObject(FName("TargetActor"), Actor);
+            }
+        }
+    }
 }
