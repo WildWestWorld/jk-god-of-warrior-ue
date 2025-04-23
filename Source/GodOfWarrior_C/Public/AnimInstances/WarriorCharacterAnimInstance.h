@@ -36,4 +36,8 @@ protected:
 	//是否有加速度
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="AnimData|LocomotionData")
 	bool IsHasAcceleration;
+
+	//移动方向
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="AnimData|LocomotionData")
+	float LocomotionDirection;
 };
