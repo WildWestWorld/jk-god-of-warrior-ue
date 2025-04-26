@@ -2,6 +2,7 @@
 
 #include "Items/Weapons/WarriorWeaponBase.h"
 
+#include "BlueprintFunctionLibrary/WarriorBlueprintFunctionLibrary.h"
 #include "Components/BoxComponent.h"
 #include "Debug/WarriorDebugHelper.h"
 
@@ -45,11 +46,9 @@ void AWarriorWeaponBase::OnCollisionBoxBeginOverlap(UPrimitiveComponent* Overlap
 	APawn* WeaponOwningPawn = GetInstigator<APawn>();
 	// 确保武器已被正确分配给一个Pawn，否则报错
 	checkf(WeaponOwningPawn, TEXT("Forgot to assign an instigator as the owning pawn for the weapon:%s"), *GetName())
-	// 尝试将碰撞的Actor转换为Pawn类型
 	if (APawn* HitPawn = Cast<APawn>(OtherActor))
 	{
-		// 确保不是与武器持有者自己发生碰撞
-		if (WeaponOwningPawn != HitPawn)
+		if (UWarriorBlueprintFunctionLibrary::IsTargetPawnHostile(WeaponOwningPawn, HitPawn))
 		{
 			OnWeaponHitTarget.ExecuteIfBound(OtherActor);
 		}
@@ -68,13 +67,11 @@ void AWarriorWeaponBase::OnCollisionBoxEndOverlap(UPrimitiveComponent* Overlappe
 	APawn* WeaponOwningPawn = GetInstigator<APawn>();
 	// 确保武器已被正确分配给一个Pawn，否则报错
 	checkf(WeaponOwningPawn, TEXT("Forgot to assign an instigator as the owning pawn for the weapon:%s"), *GetName())
-	// 尝试将碰撞的Actor转换为Pawn类型
 	if (APawn* HitPawn = Cast<APawn>(OtherActor))
 	{
-		// 确保不是与武器持有者自己发生碰撞
-		if (WeaponOwningPawn != HitPawn)
+		if (UWarriorBlueprintFunctionLibrary::IsTargetPawnHostile(WeaponOwningPawn, HitPawn))
 		{
-			OnWeaponPulledFromTarget.ExecuteIfBound(OtherActor);
+			OnWeaponHitTarget.ExecuteIfBound(OtherActor);
 		}
 	}
 }

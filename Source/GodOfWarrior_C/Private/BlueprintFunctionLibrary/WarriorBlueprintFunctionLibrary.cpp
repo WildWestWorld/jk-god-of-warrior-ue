@@ -3,6 +3,7 @@
 
 #include "BlueprintFunctionLibrary/WarriorBlueprintFunctionLibrary.h"
 #include "AbilitySystemBlueprintLibrary.h"
+#include "GenericTeamAgentInterface.h"
 #include "AbilitySystem/WarriorAbilitySystemComponent.h"
 #include "Interfaces/PawnCombatInterface.h"
 
@@ -156,9 +157,43 @@ UPawnCombatComponent* UWarriorBlueprintFunctionLibrary::BP_GetPawnCombatComponen
 {
 	//NativeGetPawnCombatComponentFromActor 我们自己写的 就在这个类里面
 	UPawnCombatComponent* CombatComponent = NativeGetPawnCombatComponentFromActor(InActor);
-	
+
 	// 根据组件获取结果设置有效性类型
 	OutValidType = CombatComponent ? EWarriorValidType::Valid : EWarriorValidType::Invalid;
-	
+
 	return CombatComponent;
+}
+
+/**
+ * 检查目标Pawn是否敌对
+ * 
+ * @param QueryPawn - 查询发起者的Pawn
+ * @param TargetPawn - 要检查的目标Pawn
+ * @return 如果两个Pawn属于不同队伍返回true，否则返回false
+ * 
+ * 实现细节:
+ * 1. 检查两个Pawn是否有效
+ * 2. 获取两个Pawn的Controller并转换为IGenericTeamAgentInterface接口
+ * 3. 如果两个Controller都实现了接口，比较它们的队伍ID
+ * 4. 如果队伍ID不同，说明是敌对关系
+ * 5. 如果任一Controller未实现接口，默认返回false
+ */
+bool UWarriorBlueprintFunctionLibrary::IsTargetPawnHostile(APawn* QueryPawn, APawn* TargetPawn)
+{
+	// 检查两个Pawn是否有效
+	check(QueryPawn && TargetPawn);
+
+	// 获取两个Pawn的Controller并转换为IGenericTeamAgentInterface接口
+	IGenericTeamAgentInterface* QueryTeamAgent = Cast<IGenericTeamAgentInterface>(QueryPawn->GetController());
+	IGenericTeamAgentInterface* TargetTeamAgent = Cast<IGenericTeamAgentInterface>(TargetPawn->GetController());
+
+	// 如果两个Controller都实现了接口，比较它们的队伍ID
+	if (QueryTeamAgent && TargetTeamAgent)
+	{
+		// 队伍ID不同说明是敌对关系
+		return QueryTeamAgent->GetGenericTeamId() != TargetTeamAgent->GetGenericTeamId();
+	}
+
+	// 如果任一Controller未实现接口，默认返回false
+	return false;
 }

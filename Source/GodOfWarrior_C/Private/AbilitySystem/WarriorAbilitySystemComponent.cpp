@@ -107,3 +107,49 @@ void UWarriorAbilitySystemComponent::RemovedGrantedHeroWeaponAbilities(
 	// 清空句柄数组,防止重复移除
 	InSpecHandlesToRemove.Empty();
 }
+
+/**
+ * 尝试通过标签激活技能
+ * 根据传入的技能标签，随机选择一个符合条件的技能并尝试激活
+ * 
+ * @param AbilityTagToActivate - 要激活的技能标签
+ * @return bool - 是否成功激活技能
+ * 
+ * 函数流程:
+ * 1. 验证标签有效性
+ * 2. 获取所有匹配该标签的可激活技能
+ * 3. 随机选择一个技能尝试激活
+ * 4. 如果技能未处于激活状态，则尝试激活
+ */
+bool UWarriorAbilitySystemComponent::TryActivateAbilityByTag(FGameplayTag AbilityTagToActivate)
+{
+	// 检查传入的技能标签是否有效
+	check(AbilityTagToActivate.IsValid());
+	
+	// 存储找到的可激活技能规格
+	TArray<FGameplayAbilitySpec*> FoundAbilitySpecs;
+	
+	// 获取所有匹配该标签的可激活技能
+	GetActivatableGameplayAbilitySpecsByAllMatchingTags(AbilityTagToActivate.GetSingleTagContainer(),
+	                                                    FoundAbilitySpecs);
+
+	// 如果找到匹配的技能
+	if (!FoundAbilitySpecs.IsEmpty())
+	{
+		// 随机选择一个技能索引
+		const int32 RandomAbilityIndex = FMath::RandRange(0, FoundAbilitySpecs.Num() - 1);
+		
+		// 获取要激活的技能规格
+		FGameplayAbilitySpec* SpecToActivate = FoundAbilitySpecs[RandomAbilityIndex];
+		check(SpecToActivate);
+		
+		// 如果技能未处于激活状态，则尝试激活
+		if (!SpecToActivate->IsActive())
+		{
+			return TryActivateAbility(SpecToActivate->Handle);
+		}
+	}
+	
+	// 未找到可激活的技能或激活失败
+	return false;
+}
