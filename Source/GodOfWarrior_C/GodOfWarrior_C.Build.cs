@@ -37,7 +37,8 @@ public class GodOfWarrior_C : ModuleRules
 			"EnhancedInput", // 增强输入系统
 			"GameplayTags", // 游戏标签系统
 			"GameplayTasks", "GameplayAbilities", "AIModule", //开启GAS得加入
-			"AnimGraphRuntime" //特殊動畫需要开启
+			"AnimGraphRuntime", //特殊動畫需要开启
+			"MotionWarping" //移动扭曲
 		});
 
 

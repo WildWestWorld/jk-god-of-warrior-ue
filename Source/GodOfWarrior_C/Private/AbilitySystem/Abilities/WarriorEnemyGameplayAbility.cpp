@@ -3,7 +3,9 @@
 
 #include "AbilitySystem/Abilities/WarriorEnemyGameplayAbility.h"
 
+#include "AbilitySystem/WarriorAbilitySystemComponent.h"
 #include "Characters/WarriorEnemyCharacter.h"
+#include "GameplayTags/WarriorGameplayTags.h"
 
 /**
  * 从ActorInfo中获取敌人角色
@@ -35,4 +37,32 @@ AWarriorEnemyCharacter* UWarriorEnemyGameplayAbility::GetEnemyCharacterFromActor
 UEnemyCombatComponent* UWarriorEnemyGameplayAbility::GetEnemyCombatComponentFromActorInfo()
 {
 	return GetEnemyCharacterFromActorInfo()->GetEnemyCombatComponent();
+}
+
+FGameplayEffectSpecHandle UWarriorEnemyGameplayAbility::MakeEnemyDamageEffectSpecHandle(
+	TSubclassOf<UGameplayEffect> EffectClass, const FScalableFloat& InDamageScalableFloat)
+{
+	check(EffectClass);
+	// 获取技能系统组件
+	UAbilitySystemComponent* AbilitySystemComponent = GetWarriorAbilitySystemComponentFromActorInfo();
+	AActor* AvatarActor = GetAvatarActorFromActorInfo();
+
+
+	// 创建效果上下文并设置相关参数
+	// - 设置当前技能为效果来源
+	// - 设置角色为源对象和发起者
+	FGameplayEffectContextHandle ContextHandle = AbilitySystemComponent->MakeEffectContext();
+	ContextHandle.SetAbility(this);
+	ContextHandle.AddSourceObject(AvatarActor);
+	ContextHandle.AddInstigator(AvatarActor, AvatarActor);
+
+	// 使用技能系统组件创建外发效果规范
+	FGameplayEffectSpecHandle EffectSpecHandle = AbilitySystemComponent->MakeOutgoingSpec(
+		EffectClass, GetAbilityLevel(), ContextHandle);
+
+	// 设置效果的基础伤害值
+	EffectSpecHandle.Data->SetSetByCallerMagnitude(WarriorGameplayTags::Shared_SetByCaller_BaseDamage,
+	                                               InDamageScalableFloat.GetValueAtLevel(GetAbilityLevel()));
+
+	return EffectSpecHandle;
 }

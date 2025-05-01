@@ -36,6 +36,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Warrior|Ability")
 	UEnemyCombatComponent* GetEnemyCombatComponentFromActorInfo();
 
+	UFUNCTION(BlueprintPure, Category = "Warrior|Ability")
+	FGameplayEffectSpecHandle MakeEnemyDamageEffectSpecHandle(TSubclassOf<UGameplayEffect> EffectClass,
+	                                                          const FScalableFloat& InDamageScalableFloat);
+
 private:
 	// 缓存的敌人角色弱指针,用于优化性能
 	// 使用弱指针避免循环引用导致的内存泄漏

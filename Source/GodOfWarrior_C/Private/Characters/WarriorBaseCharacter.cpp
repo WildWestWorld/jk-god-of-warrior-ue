@@ -6,6 +6,8 @@
 #include "AbilitySystem/WarriorAbilitySystemComponent.h"
 #include "AbilitySystem/WarriorAttributeSet.h"
 
+#include "MotionWarpingComponent.h"
+
 // Sets default values
 AWarriorBaseCharacter::AWarriorBaseCharacter()
 {
@@ -35,6 +37,8 @@ AWarriorBaseCharacter::AWarriorBaseCharacter()
 	// UWarriorAttributeSet: 自定义的属性集合类
 	// "WarriorAttributeSet": 属性集合的唯一标识名称
 	WarriorAttributeSet = CreateDefaultSubobject<UWarriorAttributeSet>(TEXT("WarriorAttributeSet"));
+
+	MotionWarpingComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarpingComponent"));
 }
 
 //方法 来自 IAbilitySystemInterface 继承IAbilitySystemInterface 必须实现,需要返回UWarriorAbilitySystemComponent 类型  不然报错

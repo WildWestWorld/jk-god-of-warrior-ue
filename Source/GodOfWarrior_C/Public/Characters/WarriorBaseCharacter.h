@@ -28,6 +28,7 @@
 class UDataAsset_StartUpDataBase;
 class UWarriorAttributeSet;
 class UWarriorAbilitySystemComponent;
+class UMotionWarpingComponent;
 
 /**
 * 战士基础角色类
@@ -79,6 +80,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="AbilitySystem")
 	UWarriorAttributeSet* WarriorAttributeSet;
 
+
 	/**
 	 * 角色启动数据资产引用
 	 * 使用TSoftObjectPtr以支持异步加载 ，软链接 异步加载
@@ -87,6 +89,10 @@ protected:
 	 */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="CharacterData")
 	TSoftObjectPtr<UDataAsset_StartUpDataBase> CharacterStartUpData;
+
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="MotionWarping")
+	UMotionWarpingComponent* MotionWarpingComponent;
 
 public:
 	/**
