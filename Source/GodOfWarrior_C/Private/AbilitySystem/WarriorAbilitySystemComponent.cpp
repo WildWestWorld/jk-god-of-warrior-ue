@@ -7,6 +7,7 @@
 #include "AbilitySystem/Abilities/WarriorGameplayAbility.h"
 #include "AbilitySystem/Abilities/WarriorHeroGameplayAbility.h"
 #include "Debug/WarriorDebugHelper.h"
+#include "GameplayTags/WarriorGameplayTags.h"
 
 /**
  * 处理技能输入按下事件
@@ -38,6 +39,17 @@ void UWarriorAbilitySystemComponent::OnAbilityInputPressed(const FGameplayTag& I
  */
 void UWarriorAbilitySystemComponent::OnAbilityInputReleased(const FGameplayTag& InInputTag)
 {
+	if (!InInputTag.IsValid() || !InInputTag.MatchesTag(WarriorGameplayTags::InputTag_MustBeHeld))
+	{
+		return;
+	}
+	for (const FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities())
+	{
+		if (AbilitySpec.GetDynamicSpecSourceTags().HasTagExact(InInputTag) && AbilitySpec.IsActive())
+		{
+			CancelAbilityHandle(AbilitySpec.Handle);
+		}
+	}
 }
 
 
@@ -125,10 +137,10 @@ bool UWarriorAbilitySystemComponent::TryActivateAbilityByTag(FGameplayTag Abilit
 {
 	// 检查传入的技能标签是否有效
 	check(AbilityTagToActivate.IsValid());
-	
+
 	// 存储找到的可激活技能规格
 	TArray<FGameplayAbilitySpec*> FoundAbilitySpecs;
-	
+
 	// 获取所有匹配该标签的可激活技能
 	GetActivatableGameplayAbilitySpecsByAllMatchingTags(AbilityTagToActivate.GetSingleTagContainer(),
 	                                                    FoundAbilitySpecs);
@@ -138,18 +150,18 @@ bool UWarriorAbilitySystemComponent::TryActivateAbilityByTag(FGameplayTag Abilit
 	{
 		// 随机选择一个技能索引
 		const int32 RandomAbilityIndex = FMath::RandRange(0, FoundAbilitySpecs.Num() - 1);
-		
+
 		// 获取要激活的技能规格
 		FGameplayAbilitySpec* SpecToActivate = FoundAbilitySpecs[RandomAbilityIndex];
 		check(SpecToActivate);
-		
+
 		// 如果技能未处于激活状态，则尝试激活
 		if (!SpecToActivate->IsActive())
 		{
 			return TryActivateAbility(SpecToActivate->Handle);
 		}
 	}
-	
+
 	// 未找到可激活的技能或激活失败
 	return false;
 }

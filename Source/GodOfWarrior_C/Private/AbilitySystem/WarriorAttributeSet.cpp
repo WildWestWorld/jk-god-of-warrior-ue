@@ -95,9 +95,9 @@ void UWarriorAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCal
 		SetCurrentHealth(NewCurrentHealth);
 
 		// 创建并打印调试信息
-		const FString DebugString = FString::Printf(
-			TEXT("Old Health:%f,Damage Done:%f,NewCurrentHealth: %f"), OldHealth, DamageDone, NewCurrentHealth);
-		Debug::Print(DebugString, FColor::Green);
+		// const FString DebugString = FString::Printf(
+		// 	TEXT("Old Health:%f,Damage Done:%f,NewCurrentHealth: %f"), OldHealth, DamageDone, NewCurrentHealth);
+		// Debug::Print(DebugString, FColor::Green);
 
 		// 广播生命值百分比变化事件
 		PawnUIComponent->OnCurrentHealthChanged.Broadcast(GetCurrentHealth() / GetMaxHealth());

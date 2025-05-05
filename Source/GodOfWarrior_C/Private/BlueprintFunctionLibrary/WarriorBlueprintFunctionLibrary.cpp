@@ -5,7 +5,10 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "GenericTeamAgentInterface.h"
 #include "AbilitySystem/WarriorAbilitySystemComponent.h"
+#include "Debug/WarriorDebugHelper.h"
+#include "GameplayTags/WarriorGameplayTags.h"
 #include "Interfaces/PawnCombatInterface.h"
+#include "Kismet/KismetMathLibrary.h"
 
 /**
  * 从Actor获取WarriorAbilitySystemComponent组件
@@ -196,4 +199,91 @@ bool UWarriorBlueprintFunctionLibrary::IsTargetPawnHostile(APawn* QueryPawn, APa
 
 	// 如果任一Controller未实现接口，默认返回false
 	return false;
+}
+
+/**
+ * 获取可缩放浮点值在指定等级的值
+ * 
+ * @param InScalableFloat - 要获取值的可缩放浮点对象
+ * @param InLevel - 要获取值的等级
+ * @return 返回指定等级下的浮点值
+ */
+float UWarriorBlueprintFunctionLibrary::GetScalableFloatValueAtLevel(const FScalableFloat& InScalableFloat,
+                                                                     float InLevel)
+{
+	return InScalableFloat.GetValueAtLevel(InLevel);
+}
+
+/**
+ * 计算受击反应方向标签
+ * 
+ * @param InAttacker - 攻击者Actor
+ * @param InVictim - 受击者Actor
+ * @param OutAngleDifference - 输出参数，表示攻击方向与受击者前向的夹角
+ * @return 返回受击反应方向的GameplayTag
+ * 
+ * 实现细节:
+ * 1. 检查输入参数有效性
+ * 2. 获取受击者的前向向量
+ * 3. 计算攻击者到受击者的归一化方向向量
+ * 4. 计算两个向量的点积，用于确定夹角
+ * 5. 使用反余弦计算实际角度值
+ * 6. 通过叉积判断攻击方向在受击者的左侧还是右侧
+ * 7. 根据叉积结果调整角度值的正负号
+ */
+FGameplayTag UWarriorBlueprintFunctionLibrary::ComputeHitReactDirectionTag(AActor* InAttacker, AActor* InVictim,
+                                                                           float& OutAngleDifference)
+{
+	// 检查输入参数有效性
+	check(InAttacker && InVictim);
+
+	// 获取受击者的前向向量
+	const FVector VictimForward = InVictim->GetActorForwardVector();
+
+	// 计算攻击者到受击者的归一化方向向量
+	const FVector VictimAttackerNormalized = (InAttacker->GetActorLocation() - InVictim->GetActorLocation()).
+		GetSafeNormal();
+
+	// 计算两个向量的点积，用于确定夹角
+	const float DotResult = FVector::DotProduct(VictimForward, VictimAttackerNormalized);
+
+	// 使用反余弦计算实际角度值
+	OutAngleDifference = UKismetMathLibrary::DegAcos(DotResult);
+
+	// 通过叉积判断攻击方向在受击者的左侧还是右侧
+	const FVector CrossResult = FVector::CrossProduct(VictimForward, VictimAttackerNormalized);
+
+	// 如果叉积的Z分量小于0，说明攻击方向在受击者的左侧，将角度设为负值
+	if (CrossResult.Z < 0.0f)
+	{
+		OutAngleDifference *= -1.0f;
+	}
+
+	if (OutAngleDifference >= -45.f && OutAngleDifference <= 45.f)
+	{
+		return WarriorGameplayTags::Shared_Status_HitReact_Front;
+	}
+	else if (OutAngleDifference < -45.f && OutAngleDifference >= -135.f)
+	{
+		return WarriorGameplayTags::Shared_Status_HitReact_Left;
+	}
+	else if (OutAngleDifference < -135.f || OutAngleDifference > 135.f)
+	{
+		return WarriorGameplayTags::Shared_Status_HitReact_Back;
+	}
+	else if (OutAngleDifference > 45.f && OutAngleDifference <= 135.f)
+	{
+		return WarriorGameplayTags::Shared_Status_HitReact_Right;
+	}
+
+	return WarriorGameplayTags::Shared_Status_HitReact_Front;
+}
+
+bool UWarriorBlueprintFunctionLibrary::IsValidBlock(AActor* InAttacker, AActor* InDefender)
+{
+	check(InAttacker && InDefender);
+	const float DotResult = FVector::DotProduct(InAttacker->GetActorForwardVector(),
+	                                            InDefender->GetActorForwardVector());
+
+	return DotResult < -0.1f;
 }
