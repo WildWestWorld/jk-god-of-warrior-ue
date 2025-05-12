@@ -60,7 +60,7 @@ public:
 	 * 可在蓝图中调用，用于动态管理Actor的GameplayTag
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Warrior|BlueprintFunctionLibrary")
-	static void RemoveGameplayFromActorIfFound(AActor* InActor, FGameplayTag TagToRemove);
+	static void RemoveGameplayTagFromActorIfFound(AActor* InActor, FGameplayTag TagToRemove);
 
 	/**
 	 * 检查Actor是否拥有指定的GameplayTag

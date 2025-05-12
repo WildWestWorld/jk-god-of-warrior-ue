@@ -65,7 +65,7 @@ void UWarriorBlueprintFunctionLibrary::AddGameplayTagToActorIfNone(AActor* InAct
  * 2. 检查是否有指定标签
  * 3. 如果有该标签，则移除它
  */
-void UWarriorBlueprintFunctionLibrary::RemoveGameplayFromActorIfFound(AActor* InActor, FGameplayTag TagToRemove)
+void UWarriorBlueprintFunctionLibrary::RemoveGameplayTagFromActorIfFound(AActor* InActor, FGameplayTag TagToRemove)
 {
 	// 获取Actor的能力系统组件
 	UWarriorAbilitySystemComponent* ASC = NativeGetWarriorASCFromActor(InActor);

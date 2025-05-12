@@ -27,9 +27,23 @@ void UWarriorAbilitySystemComponent::OnAbilityInputPressed(const FGameplayTag& I
 		// 检查技能的动态源标签是否与输入标签完全匹配
 		// 如果不匹配则继续下一个技能
 		if (!AbilitySpec.GetDynamicSpecSourceTags().HasTagExact(InInputTag)) continue;
-
-		// 尝试激活匹配的技能
-		TryActivateAbility(AbilitySpec.Handle);
+		if (InInputTag.MatchesTag(WarriorGameplayTags::InputTag_Toggleable))
+		{
+			if (AbilitySpec.IsActive())
+			{
+				CancelAbilityHandle(AbilitySpec.Handle);
+			}
+			else
+			{
+				// 尝试激活匹配的技能
+				TryActivateAbility(AbilitySpec.Handle);
+			}
+		}
+		else
+		{
+			// 尝试激活匹配的技能
+			TryActivateAbility(AbilitySpec.Handle);
+		}
 	}
 }
 

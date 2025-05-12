@@ -3,6 +3,7 @@
 #include "Characters/WarriorHeroCharacter.h"
 
 // 添加调试器
+#include "AbilitySystemBlueprintLibrary.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -140,7 +141,19 @@ void AWarriorHeroCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 	// 不使用，移动不了镜头
 	WarriorEnhancedInputComponent->BindNativeInputAction(InputConfigDataAsset, WarriorGameplayTags::InputTag_Look,
 	                                                     ETriggerEvent::Triggered, this, &ThisClass::Input_Look);
-	// 绑定技能输入动作
+
+
+	WarriorEnhancedInputComponent->BindNativeInputAction(InputConfigDataAsset,
+	                                                     WarriorGameplayTags::InputTag_SwitchTarget,
+	                                                     ETriggerEvent::Triggered, this,
+	                                                     &ThisClass::Input_SwitchTargetTriggered);
+
+
+	WarriorEnhancedInputComponent->BindNativeInputAction(InputConfigDataAsset,
+	                                                     WarriorGameplayTags::InputTag_SwitchTarget,
+	                                                     ETriggerEvent::Completed, this,
+	                                                     &ThisClass::Input_SwitchTargetCompleted);
+	// 绑定技能输入动作 
 	// @param InputConfigDataAsset - 包含输入配置的数据资产
 	// @param this - 当前角色实例
 	// @param Input_AbilityInputPressed - 按下输入时调用的回调函数
@@ -245,6 +258,20 @@ void AWarriorHeroCharacter::Input_Look(const FInputActionValue& InputActionValue
 		// LookAxisVector.Y: 正值表示向上看，负值表示向下看
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
+}
+
+void AWarriorHeroCharacter::Input_SwitchTargetTriggered(const FInputActionValue& InputActionValue)
+{
+	SwitchDirection = InputActionValue.Get<FVector2D>();
+}
+
+void AWarriorHeroCharacter::Input_SwitchTargetCompleted(const FInputActionValue& InputActionValue)
+{
+	FGameplayEventData Data;
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
+		this, SwitchDirection.X > 0.f
+			      ? WarriorGameplayTags::Player_Event_SwitchTarget_Right
+			      : WarriorGameplayTags::Player_Event_SwitchTarget_Left, Data);
 }
 
 /**

@@ -88,6 +88,12 @@ private:
 	void Input_Move(const FInputActionValue& InputActionValue);
 	//EnhanceInput视角移动函数
 	void Input_Look(const FInputActionValue& InputActionValue);
+
+	void Input_SwitchTargetTriggered(const FInputActionValue& InputActionValue);
+	void Input_SwitchTargetCompleted(const FInputActionValue& InputActionValue);
+
+	FVector2D SwitchDirection = FVector2D::ZeroVector;
+
 	// 当技能输入按下时调用的函数
 	// @param InputTag - 与按下输入关联的游戏标签，用于识别具体是哪个技能输入
 	void Input_AbilityInputPressed(FGameplayTag InputTag);
