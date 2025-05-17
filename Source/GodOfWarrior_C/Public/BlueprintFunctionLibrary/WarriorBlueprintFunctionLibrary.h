@@ -8,6 +8,7 @@
 #include "WarriorTypes/WarriorEnumTypes.h"
 #include "WarriorBlueprintFunctionLibrary.generated.h"
 
+struct FGameplayEffectSpecHandle;
 struct FScalableFloat;
 class UPawnCombatComponent;
 // 前向声明UWarriorAbilitySystemComponent类
@@ -119,4 +120,7 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Warrior|BlueprintFunctionLibrary")
 	static bool IsValidBlock(AActor* InAttacker, AActor* InDefender);
+
+	UFUNCTION(BlueprintCallable, Category = "Warrior|BlueprintFunctionLibrary")
+	static  bool ApplyGameplayEffectSpecHandleToTargetActor(AActor* InInstigator,AActor* InTargetActor,const FGameplayEffectSpecHandle& InSpecHandle);
 };
